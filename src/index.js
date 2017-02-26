@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import NiMop from './nimop'
+import Mopy from './mopy'
 
 ReactDOM.render(
-  <NiMop url="nausicaa.suginami" />,
+  <div>
+    <Mopy url="nausicaa.suginami" />
+  </div>,
   document.getElementById('root')
 );
 

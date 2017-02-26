@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, ButtonGroup, Glyphicon, ProgressBar } from 'react-bootstrap';
+import { Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import intersperse from './intersperse';
 import Mopidy from 'mopidy';
+import Progress from './progress';
 
 class CurrentTrack extends React.Component {
   render() {
@@ -41,22 +42,13 @@ class Controls extends React.Component {
   }
 }
 
-class Progress extends React.Component {
-  render() {
-    return (
-      <ProgressBar active now={this.props.now} />
-    );
-  }
-}
-
-
-class NiMop extends React.Component {
+class Mopy extends React.Component {
   constructor(props){
     super(props);
     this.state = {
       connected: false,
       track: false,
-      length: 1,
+      length: 100,
       now: 0,
     }
     this.updateTimePosition = this.updateTimePosition.bind(this)
@@ -79,8 +71,8 @@ class NiMop extends React.Component {
   requestTimePosition() { this.mopidy.playback.getTimePosition().done(this.updateTimePosition); }
   requestCurrentTrack() { this.mopidy.playback.getCurrentTrack().done(this.updateCurrentTrack); }
 
-  updateTimePosition(result) { this.setState({now: result / this.state.length}); }
-  updateCurrentTrack(track) { if (track) { this.setState({track: track, length: track.length / 100}); } }
+  updateTimePosition(result) { this.setState({now: result}); }
+  updateCurrentTrack(track) { if (track) { this.setState({track: track, length: track.length}); } }
 
   componentWillUnmount() {
     this.mopidy.close();
@@ -97,10 +89,10 @@ class NiMop extends React.Component {
       <div>
         <CurrentTrack track={this.state.track} />
         <Controls handlers={this.controlHandlers} />
-        <Progress now={this.state.now} />
+        <Progress max={this.state.length} now={this.state.now} />
       </div>
       );
   }
 }
 
-export default NiMop;
+export default Mopy;
