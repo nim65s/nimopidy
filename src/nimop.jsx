@@ -1,3 +1,8 @@
+import React from 'react';
+import { Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import intersperse from './intersperse';
+import Mopidy from 'mopidy';
+
 class CurrentTrack extends React.Component {
   render() {
     if (this.props.track) {
@@ -25,13 +30,13 @@ class Controls extends React.Component {
 
   render() {
     return (
-      <div className="btn-group" role="group">
-        <button className="btn btn-default btn-lg" onClick={this.handlers} name="previous"><span className="glyphicon glyphicon-step-backward" /></button>
-        <button className="btn btn-default btn-lg" onClick={this.handlers} name="play"    ><span className="glyphicon glyphicon-play"          /></button>
-        <button className="btn btn-default btn-lg" onClick={this.handlers} name="pause"   ><span className="glyphicon glyphicon-pause"         /></button>
-        <button className="btn btn-default btn-lg" onClick={this.handlers} name="stop"    ><span className="glyphicon glyphicon-stop"          /></button>
-        <button className="btn btn-default btn-lg" onClick={this.handlers} name="next"    ><span className="glyphicon glyphicon-step-forward"  /></button>
-      </div>
+      <ButtonGroup>
+        <Button bsSize="large" onClick={this.handlers} name="previous"><Glyphicon glyph="step-backward" /></Button>
+        <Button bsSize="large" onClick={this.handlers} name="play"    ><Glyphicon glyph="play"          /></Button>
+        <Button bsSize="large" onClick={this.handlers} name="pause"   ><Glyphicon glyph="pause"         /></Button>
+        <Button bsSize="large" onClick={this.handlers} name="stop"    ><Glyphicon glyph="stop"          /></Button>
+        <Button bsSize="large" onClick={this.handlers} name="next"    ><Glyphicon glyph="step-forward"  /></Button>
+      </ButtonGroup>
     );
   }
 }
@@ -80,25 +85,4 @@ class NiMop extends React.Component {
   }
 }
 
-ReactDOM.render(
-  <NiMop url="nausicaa.suginami" />,
-  document.getElementById('container')
-);
-
-
-// http://stackoverflow.com/a/23619085/1368502
-/* intersperse: Return an array with the separator interspersed between
- * each element of the input array.
- *
- * > _([1,2,3]).intersperse(0)
- * [1,0,2,0,3]
- */
-function intersperse(arr, sep) {
-  if (arr.length === 0) {
-    return [];
-  }
-
-  return arr.slice(1).reduce(function(xs, x, i) {
-    return xs.concat([sep, x]);
-  }, [arr[0]]);
-}
+export default NiMop;
