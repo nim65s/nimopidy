@@ -10,7 +10,7 @@ class Progress extends React.Component {
   click(event) {
     var element = (event.target.parentElement.classList[0] === "progress" ? event.target.parentElement : event.target);
     var rectangle = element.getBoundingClientRect();
-    console.log((event.pageX - rectangle.left) * this.props.max / rectangle.width);
+    this.props.onSeek(Math.round((event.pageX - rectangle.left) * this.props.max / rectangle.width));
   }
 
   render() {

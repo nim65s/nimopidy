@@ -54,6 +54,7 @@ class Mopy extends React.Component {
     this.updateTimePosition = this.updateTimePosition.bind(this)
     this.updateCurrentTrack = this.updateCurrentTrack.bind(this)
     this.controlHandlers = this.controlHandlers.bind(this)
+    this.handleSeek = this.handleSeek.bind(this)
   }
 
   componentDidMount() {
@@ -74,6 +75,8 @@ class Mopy extends React.Component {
   updateTimePosition(result) { this.setState({now: result}); }
   updateCurrentTrack(track) { if (track) { this.setState({track: track, length: track.length}); } }
 
+  handleSeek(time) { this.mopidy.playback.seek({'time_position': time}); }
+
   componentWillUnmount() {
     this.mopidy.close();
     this.mopidy.off();
@@ -89,7 +92,7 @@ class Mopy extends React.Component {
       <div>
         <CurrentTrack track={this.state.track} />
         <Controls handlers={this.controlHandlers} />
-        <Progress max={this.state.length} now={this.state.now} />
+        <Progress max={this.state.length} now={this.state.now} onSeek={this.handleSeek} />
       </div>
       );
   }
