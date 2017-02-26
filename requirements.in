@@ -1,2 +1,7 @@
 Django
 djangorestframework
+django-filter
+django-crispy-forms
+html2text
+beautifulsoup4
+requests
