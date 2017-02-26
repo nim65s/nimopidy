@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { Button, ButtonGroup, Glyphicon, ProgressBar } from 'react-bootstrap';
 import intersperse from './intersperse';
 import Mopidy from 'mopidy';
 
@@ -41,13 +41,25 @@ class Controls extends React.Component {
   }
 }
 
+class Progress extends React.Component {
+  render() {
+    return (
+      <ProgressBar active now={this.props.now} />
+    );
+  }
+}
+
+
 class NiMop extends React.Component {
   constructor(props){
     super(props);
     this.state = {
       connected: false,
       track: false,
+      length: 1,
+      now: 0,
     }
+    this.updateTimePosition = this.updateTimePosition.bind(this)
     this.updateCurrentTrack = this.updateCurrentTrack.bind(this)
     this.controlHandlers = this.controlHandlers.bind(this)
   }
@@ -59,18 +71,23 @@ class NiMop extends React.Component {
     });
     this.mopidy.on("state:online", () => {this.setState({connected:true}); this.requestCurrentTrack();});
     this.mopidy.on("state:offline", () => {this.setState({connected:false});});
-    this.timerID = setInterval(() => {if (this.state.connected) {this.requestCurrentTrack();}}, 1000);
+    this.timerIDct = setInterval(() => {if (this.state.connected) {this.requestCurrentTrack();}}, 1000);
+    this.timerIDtp = setInterval(() => {if (this.state.connected) {this.requestTimePosition();}}, 100);
   }
 
+
+  requestTimePosition() { this.mopidy.playback.getTimePosition().done(this.updateTimePosition); }
   requestCurrentTrack() { this.mopidy.playback.getCurrentTrack().done(this.updateCurrentTrack); }
 
-  updateCurrentTrack(track) { if (track) { this.setState({track: track}); } }
+  updateTimePosition(result) { this.setState({now: result / this.state.length}); }
+  updateCurrentTrack(track) { if (track) { this.setState({track: track, length: track.length / 100}); } }
 
   componentWillUnmount() {
     this.mopidy.close();
     this.mopidy.off();
     this.mopidy = null;
-    clearInterval(this.timerID);
+    clearInterval(this.timerIDtp);
+    clearInterval(this.timerIDct);
   }
 
   controlHandlers(command) { if (this.state.connected) { this.mopidy.playback[command](); }}
@@ -80,6 +97,7 @@ class NiMop extends React.Component {
       <div>
         <CurrentTrack track={this.state.track} />
         <Controls handlers={this.controlHandlers} />
+        <Progress now={this.state.now} />
       </div>
       );
   }
