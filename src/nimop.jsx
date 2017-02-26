@@ -15,6 +15,27 @@ class CurrentTrack extends React.Component {
   }
 }
 
+class Controls extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handlers = this.handlers.bind(this);
+  }
+
+  handlers(e) { this.props.handlers(e.target.name); }
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.handlers} name="previous">←</button>
+        <button onClick={this.handlers} name="play">Play</button>
+        <button onClick={this.handlers} name="pause">Pause</button>
+        <button onClick={this.handlers} name="stop">Stop</button>
+        <button onClick={this.handlers} name="next">→</button>
+      </div>
+    );
+  }
+}
+
 class NiMop extends React.Component {
   constructor(props){
     super(props);
@@ -23,6 +44,7 @@ class NiMop extends React.Component {
       track: false,
     }
     this.updateCurrentTrack = this.updateCurrentTrack.bind(this)
+    this.controlHandlers = this.controlHandlers.bind(this)
   }
 
   componentDidMount() {
@@ -46,10 +68,13 @@ class NiMop extends React.Component {
     clearInterval(this.timerID);
   }
 
+  controlHandlers(command) { if (this.state.connected) { this.mopidy.playback[command](); }}
+
   render() {
     return (
       <div>
         <CurrentTrack track={this.state.track} />
+        <Controls handlers={this.controlHandlers} />
       </div>
       );
   }
