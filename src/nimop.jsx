@@ -25,12 +25,12 @@ class Controls extends React.Component {
 
   render() {
     return (
-      <div>
-        <button onClick={this.handlers} name="previous">←</button>
-        <button onClick={this.handlers} name="play">Play</button>
-        <button onClick={this.handlers} name="pause">Pause</button>
-        <button onClick={this.handlers} name="stop">Stop</button>
-        <button onClick={this.handlers} name="next">→</button>
+      <div className="btn-group" role="group">
+        <button className="btn btn-default btn-lg" onClick={this.handlers} name="previous"><span className="glyphicon glyphicon-step-backward" /></button>
+        <button className="btn btn-default btn-lg" onClick={this.handlers} name="play"    ><span className="glyphicon glyphicon-play"          /></button>
+        <button className="btn btn-default btn-lg" onClick={this.handlers} name="pause"   ><span className="glyphicon glyphicon-pause"         /></button>
+        <button className="btn btn-default btn-lg" onClick={this.handlers} name="stop"    ><span className="glyphicon glyphicon-stop"          /></button>
+        <button className="btn btn-default btn-lg" onClick={this.handlers} name="next"    ><span className="glyphicon glyphicon-step-forward"  /></button>
       </div>
     );
   }
