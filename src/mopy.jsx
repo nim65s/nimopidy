@@ -42,6 +42,14 @@ class Controls extends React.Component {
   }
 }
 
+class Lyrics extends React.Component {
+  render() {
+    return (
+      <div>{this.props.lyrics}</div>
+    );
+  }
+}
+
 class Mopy extends React.Component {
   constructor(props){
     super(props);
@@ -53,6 +61,7 @@ class Mopy extends React.Component {
       volume: 100,
       mute: false,
       muteIcon: "volume-up",
+      lyrics: '',
     }
     this.updateTimePosition = this.updateTimePosition.bind(this)
     this.updateCurrentTrack = this.updateCurrentTrack.bind(this)
@@ -86,9 +95,27 @@ class Mopy extends React.Component {
   }
 
   updateTimePosition(time) { this.setState({now: time, nowstr: new Date(time).toISOString().substr(14,5)}); }
-  updateCurrentTrack(track) { if (track) { this.setState({track: track, length: track.length}); } }
   updateVolume(vol) { this.setState({volume: vol}); }
   updateMute(mute) { this.setState({mute: mute, muteIcon: mute ? "volume-off" : "volume-up"}); }
+  updateCurrentTrack(track) {
+    if (track) {
+      var lyrics = 'Song.objects.get_or_create(uri="' + track.uri +'", artist="' + track.artists[0].name + '", title="' + track.name + '")[0].get_lyrics()';
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.responseType = "json";
+
+      xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200 && xmlhttp.response.count === 1) {
+          this.setState({lyrics: xmlhttp.response.results[0].lyrics});
+        }
+      }
+      xmlhttp.onreadystatechange = xmlhttp.onreadystatechange.bind(this);
+
+      xmlhttp.open("GET", 'http://' + this.props.url + ':8000/songs/?uri=' + track.uri, true);
+      xmlhttp.send()
+
+      this.setState({track: track, length: track.length, lyrics: lyrics});
+    }
+  }
 
   onSeek(time) { this.setState({now: time}); this.mopidy.playback.seek({'time_position': time}); }
   onVolume(vol) { this.mopidy.mixer.setVolume({'volume': vol}); }
@@ -112,6 +139,7 @@ class Mopy extends React.Component {
         <Progress onSeek={this.onVolume} max={100} now={this.state.volume} label={this.state.volume} wheelCoef={.1} />
         <Progress onSeek={this.onSeek} max={this.state.length} now={this.state.now} label={this.state.nowstr}
           wheelCoef={100} active />
+        <Lyrics lyrics={this.state.lyrics} />
       </div>
       );
   }

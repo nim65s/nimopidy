@@ -25,7 +25,7 @@ SECRET_KEY = '%k3i3mnq4mff9!(*o=z3tb)osi#c9e6^s6i0w^k52y85d-!2o*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['nausicaa', 'nausicaa.suginami', 'nausicaa.vpnim', 'localhost']
 
 
 # Application definition
@@ -125,9 +125,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser',
-    ],
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'PAGE_SIZE': 10
 }
