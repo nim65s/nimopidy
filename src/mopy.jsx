@@ -71,11 +71,11 @@ class Mopy extends React.Component {
     });
     this.mopidy.on("state:online", () => {this.setState({connected:true}); this.requestAll();});
     this.mopidy.on("state:offline", () => {this.setState({connected:false});});
+    this.mopidy.on('event:trackPlaybackStarted', (e) => { this.updateCurrentTrack(e.tl_track.track); });
+    this.mopidy.on('event:volumeChanged', (e) => { this.updateVolume(e.volume); });
+    this.mopidy.on('event:muteChanged', (e) => { this.updateMute(e.mute); });
     this.timerIDtp = setInterval(() => {if (this.state.connected) {this.requestTimePosition();}}, 100);
-    this.timerIDct = setInterval(() => {if (this.state.connected) {this.requestCurrentTrack();}}, 1000);
-    this.timerIDvm = setInterval(() => {if (this.state.connected) {this.requestVolume();}}, 10000);
   }
-
 
   requestAll() { this.requestCurrentTrack(); this.requestTimePosition(); this.requestVolume(); }
   requestTimePosition() { this.mopidy.playback.getTimePosition().done(this.updateTimePosition); }
@@ -91,16 +91,14 @@ class Mopy extends React.Component {
   updateMute(mute) { this.setState({mute: mute, muteIcon: mute ? "volume-off" : "volume-up"}); }
 
   onSeek(time) { this.setState({now: time}); this.mopidy.playback.seek({'time_position': time}); }
-  onVolume(vol) { this.mopidy.mixer.setVolume({'volume': vol}); this.updateVolume(vol); }
-  onMute() { this.mopidy.mixer.setMute({"mute": !this.state.mute}); this.updateMute(!this.state.mute); }
+  onVolume(vol) { this.mopidy.mixer.setVolume({'volume': vol}); }
+  onMute() { this.mopidy.mixer.setMute({"mute": !this.state.mute}); }
 
   componentWillUnmount() {
     this.mopidy.close();
     this.mopidy.off();
     this.mopidy = null;
     clearInterval(this.timerIDtp);
-    clearInterval(this.timerIDct);
-    clearInterval(this.timerIDvm);
   }
 
   controlHandlers(command) { if (this.state.connected) { this.mopidy.playback[command](); }}
