@@ -32,11 +32,11 @@ class Controls extends React.Component {
   render() {
     return (
       <ButtonGroup>
-        <Button bsSize="large" onClick={this.handlers} name="previous"><Glyphicon glyph="step-backward" /></Button>
-        <Button bsSize="large" onClick={this.handlers} name="play"    ><Glyphicon glyph="play"          /></Button>
-        <Button bsSize="large" onClick={this.handlers} name="pause"   ><Glyphicon glyph="pause"         /></Button>
-        <Button bsSize="large" onClick={this.handlers} name="stop"    ><Glyphicon glyph="stop"          /></Button>
-        <Button bsSize="large" onClick={this.handlers} name="next"    ><Glyphicon glyph="step-forward"  /></Button>
+        <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="previous"><Glyphicon glyph="step-backward" /></Button>
+        <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="play"    ><Glyphicon glyph="play"          /></Button>
+        <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="pause"   ><Glyphicon glyph="pause"         /></Button>
+        <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="stop"    ><Glyphicon glyph="stop"          /></Button>
+        <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="next"    ><Glyphicon glyph="step-forward"  /></Button>
       </ButtonGroup>
     );
   }
@@ -134,8 +134,9 @@ class Mopy extends React.Component {
     return (
       <div>
         <CurrentTrack track={this.state.track} />
-        <Controls handlers={this.controlHandlers} />
-        <Button bsSize="large" onClick={this.onMute}><Glyphicon glyph={this.state.muteIcon} /></Button>
+        <Controls handlers={this.controlHandlers} status={this.state.connected} />
+        <Button bsSize="large" onClick={this.onMute} disabled={!this.state.connected}>
+          <Glyphicon glyph={this.state.muteIcon} /></Button>
         <Progress onSeek={this.onVolume} max={100} now={this.state.volume} label={this.state.volume} wheelCoef={.1} />
         <Progress onSeek={this.onSeek} max={this.state.length} now={this.state.now} label={this.state.nowstr}
           wheelCoef={100} active />
