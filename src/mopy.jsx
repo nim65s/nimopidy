@@ -99,11 +99,15 @@ class Mopy extends React.Component {
   updateMute(mute) { this.setState({mute: mute, muteIcon: mute ? "volume-off" : "volume-up"}); }
   updateCurrentTrack(track) {
     if (track) {
-      fetch('http://' + this.props.url + ':8000/songs/?uri=' + track.uri)
-        .then(result => result.json())
-        .then(items => this.setState({lyrics: (items.count === 1) ?  items.results[0].lyrics :
-          'Song.objects.get_or_create(uri="' + track.uri +'", artist="' + track.artists[0].name + '", title="' + track.name + '")[0].get_lyrics()'
-        }));
+      fetch('http://' + this.props.url + ':8000/songs/?uri=' + track.uri).then(result => result.json())
+        .then(items => { if (items.count === 1) {
+          this.setState({lyrics: items.results[0].lyrics});
+        } else {
+          var payload = { uri: track.uri, artist: track.artists[0].name, title: track.name };
+          fetch('http://' + this.props.url + ':8000/songs/', {
+            method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+          }).then(results => results.json()).then(resp => this.setState({lyrics: resp.lyrics}));
+        }});
       this.setState({track: track, length: track.length, lyrics: ''});
     }
   }
