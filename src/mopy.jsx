@@ -104,8 +104,11 @@ class Mopy extends React.Component {
       xmlhttp.responseType = "json";
 
       xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState === 4 && xmlhttp.status === 200 && xmlhttp.response.count === 1) {
-          this.setState({lyrics: xmlhttp.response.results[0].lyrics});
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+          if (xmlhttp.response.count === 1) {
+            this.setState({lyrics: xmlhttp.response.results[0].lyrics});
+          }
+          // TODO: else POST uri, artist & title
         }
       }
       xmlhttp.onreadystatechange = xmlhttp.onreadystatechange.bind(this);
