@@ -28,7 +28,7 @@ class Controls extends React.Component {
     this.handlers = this.handlers.bind(this);
   }
 
-  handlers(e) { this.props.handlers(e.target.name); }
+  handlers(e) { this.props.handlers(e.target.name || e.target.parentElement.name); }
 
   render() {
     return (
