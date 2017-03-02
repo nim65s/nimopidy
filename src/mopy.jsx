@@ -3,6 +3,7 @@ import { Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import intersperse from './intersperse';
 import Mopidy from 'mopidy';
 import Progress from './progress';
+import ReactMarkdown from 'react-markdown';
 
 class CurrentTrack extends React.Component {
   render() {
@@ -45,7 +46,7 @@ class Controls extends React.Component {
 class Lyrics extends React.Component {
   render() {
     return (
-      <div>{this.props.lyrics}</div>
+      <ReactMarkdown source={this.props.lyrics} />
     );
   }
 }
