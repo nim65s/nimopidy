@@ -99,24 +99,12 @@ class Mopy extends React.Component {
   updateMute(mute) { this.setState({mute: mute, muteIcon: mute ? "volume-off" : "volume-up"}); }
   updateCurrentTrack(track) {
     if (track) {
-      var lyrics = 'Song.objects.get_or_create(uri="' + track.uri +'", artist="' + track.artists[0].name + '", title="' + track.name + '")[0].get_lyrics()';
-      var xmlhttp = new XMLHttpRequest();
-      xmlhttp.responseType = "json";
-
-      xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-          if (xmlhttp.response.count === 1) {
-            this.setState({lyrics: xmlhttp.response.results[0].lyrics});
-          }
-          // TODO: else POST uri, artist & title
-        }
-      }
-      xmlhttp.onreadystatechange = xmlhttp.onreadystatechange.bind(this);
-
-      xmlhttp.open("GET", 'http://' + this.props.url + ':8000/songs/?uri=' + track.uri, true);
-      xmlhttp.send()
-
-      this.setState({track: track, length: track.length, lyrics: lyrics});
+      fetch('http://' + this.props.url + ':8000/songs/?uri=' + track.uri)
+        .then(result => result.json())
+        .then(items => this.setState({lyrics: (items.count === 1) ?  items.results[0].lyrics :
+          'Song.objects.get_or_create(uri="' + track.uri +'", artist="' + track.artists[0].name + '", title="' + track.name + '")[0].get_lyrics()'
+        }));
+      this.setState({track: track, length: track.length, lyrics: ''});
     }
   }
 
