@@ -12,6 +12,7 @@ class CurrentTrack extends React.Component {
       artists = intersperse(artists, ", ");
       return (
         <div>
+          <img src={this.props.albumCover} alt={this.props.track.album.name} className="pull-left" />
           <h1>{artists}</h1>
           <h2>{this.props.track.album.name}</h2>
           <h3>{this.props.track.name}</h3>
@@ -63,6 +64,7 @@ class Mopy extends React.Component {
       mute: false,
       muteIcon: "volume-up",
       lyrics: '',
+      albumCover: '',
     }
     this.updateTimePosition = this.updateTimePosition.bind(this)
     this.updateCurrentTrack = this.updateCurrentTrack.bind(this)
@@ -109,6 +111,8 @@ class Mopy extends React.Component {
             method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
           }).then(results => results.json()).then(resp => this.setState({lyrics: resp.lyrics}));
         }});
+      fetch('https://api.spotify.com/v1/albums/' + track.album.uri.substring(14)).then(result => result.json())
+        .then(data => this.setState({albumCover: data.images[1].url}));
       this.setState({track: track, length: track.length, lyrics: ''});
     }
   }
@@ -129,13 +133,14 @@ class Mopy extends React.Component {
   render() {
     return (
       <div>
-        <CurrentTrack track={this.state.track} />
+        <CurrentTrack track={this.state.track} albumCover={this.state.albumCover} />
         <Controls handlers={this.controlHandlers} status={this.state.connected} />
         <Button bsSize="large" onClick={this.onMute} disabled={!this.state.connected}>
           <Glyphicon glyph={this.state.muteIcon} /></Button>
         <Progress onSeek={this.onVolume} max={100} now={this.state.volume} label={this.state.volume} wheelCoef={.1} />
         <Progress onSeek={this.onSeek} max={this.state.length} now={this.state.now} label={this.state.nowstr}
           wheelCoef={100} active />
+        <div className="clearfix" />
         <Lyrics lyrics={this.state.lyrics} />
       </div>
       );
