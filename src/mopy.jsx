@@ -111,10 +111,13 @@ class Mopy extends React.Component {
         .then(items => { if (items.count === 1) {
           this.setState({lyrics: items.results[0].lyrics});
         } else {
-          var payload = { uri: track.uri, artist: (track.artists ? track.artists[0].name : '?'), title: track.name };
+          var payload = JSON.stringify({ uri: track.uri, artist: (track.artists ? track.artists[0].name : '?'),
+            title: track.name });
           fetch('http://' + this.props.url + ':8000/songs/', {
-            method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
-          }).then(results => results.json()).then(resp => this.setState({lyrics: resp.lyrics}));
+            method: 'POST', headers: {'Content-Type': 'application/json'}, body: payload
+          }).catch(error => this.updateCurrentTrack(track))
+            .then(results => results.json()).then(resp => this.setState({lyrics: resp.lyrics}))
+            .catch(error => this.updateCurrentTrack(track));
         }});
       if (track.album) {
         fetch('https://api.spotify.com/v1/albums/' + track.album.uri.substring(14)).then(result => result.json())
