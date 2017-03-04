@@ -15,6 +15,7 @@ class Progress extends React.Component {
   }
 
   wheel(e) {
+    e.preventDefault();
     this.props.onSeek(Math.round(this.props.now - e.deltaY * this.props.wheelCoef));
   }
 
