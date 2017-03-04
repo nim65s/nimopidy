@@ -127,8 +127,12 @@ class Mopy extends React.Component {
     }
   }
 
-  onSeek(time) { this.setState({now: time}); this.mopidy.playback.seek({'time_position': time}); }
-  onVolume(vol) { this.mopidy.mixer.setVolume({'volume': vol}); }
+  onSeek(time) {
+    var t = Math.min(this.state.length, Math.max(0, time));
+    this.setState({now: t});
+    this.mopidy.playback.seek({'time_position': t});
+  }
+  onVolume(vol) { this.mopidy.mixer.setVolume({'volume': Math.min(100, Math.max(0, vol))}); }
   onMute() { this.mopidy.mixer.setMute({"mute": !this.state.mute}); }
 
   componentWillUnmount() {
