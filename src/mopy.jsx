@@ -116,7 +116,9 @@ class Mopy extends React.Component {
           fetch('http://' + this.props.url + ':8000/songs/', {
             method: 'POST', headers: {'Content-Type': 'application/json'}, body: payload
           }).catch(error => this.updateCurrentTrack(track))
-            .then(results => results.json()).then(resp => this.setState({lyrics: resp.lyrics}))
+            .then(results => results.json())
+            .catch(error => this.updateCurrentTrack(track))
+            .then(resp => this.setState({lyrics: resp.lyrics}))
             .catch(error => this.updateCurrentTrack(track));
         }});
       if (track.album) {
