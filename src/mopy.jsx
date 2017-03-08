@@ -8,13 +8,18 @@ import ReactMarkdown from 'react-markdown';
 class CurrentTrack extends React.Component {
   render() {
     if (this.props.track) {
-      var artists = this.props.track.artists.map((artist) => <span key={artist.name}>{artist.name}</span>);
-      artists = intersperse(artists, ", ");
+      if (this.props.track.artists) {
+        var artists = this.props.track.artists.map((artist) => <span key={artist.name}>{artist.name}</span>);
+        artists = intersperse(artists, ", ");
+      } else {
+        var artists = '?';
+      }
+      var album = this.props.track.album ? this.props.track.album.name : '?';
       return (
         <div>
-          <img src={this.props.albumCover} alt={this.props.track.album.name} className="pull-left" />
+          <img src={this.props.albumCover} alt={album} className="pull-left" />
           <h1>{artists}</h1>
-          <h2>{this.props.track.album.name}</h2>
+          <h2>{album}</h2>
           <h3>{this.props.track.name}</h3>
         </div>
         );
@@ -106,13 +111,15 @@ class Mopy extends React.Component {
         .then(items => { if (items.count === 1) {
           this.setState({lyrics: items.results[0].lyrics});
         } else {
-          var payload = { uri: track.uri, artist: track.artists[0].name, title: track.name };
+          var payload = { uri: track.uri, artist: (track.artists ? track.artists[0].name : '?'), title: track.name };
           fetch('http://' + this.props.url + ':8000/songs/', {
             method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
           }).then(results => results.json()).then(resp => this.setState({lyrics: resp.lyrics}));
         }});
-      fetch('https://api.spotify.com/v1/albums/' + track.album.uri.substring(14)).then(result => result.json())
-        .then(data => this.setState({albumCover: data.images[1].url}));
+      if (track.album) {
+        fetch('https://api.spotify.com/v1/albums/' + track.album.uri.substring(14)).then(result => result.json())
+          .then(data => this.setState({albumCover: data.images[1].url}));
+      }
       this.setState({track: track, length: track.length, lyrics: ''});
     }
   }
