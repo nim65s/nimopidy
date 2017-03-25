@@ -4,7 +4,7 @@ import Mopy from './mopy'
 
 ReactDOM.render(
   <div>
-    <Mopy url="localhost" />
+    <Mopy/>
   </div>,
   document.getElementById('root')
 );

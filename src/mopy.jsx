@@ -83,7 +83,7 @@ class Mopy extends React.Component {
 
   componentDidMount() {
     this.mopidy = new Mopidy({
-      webSocketUrl: 'ws://' + this.props.url + ':6680/mopidy/ws/',
+      webSocketUrl: 'ws://' + window.location.hostname + ':6680/mopidy/ws/',
       callingConvention: 'by-position-or-by-name'
     });
     this.mopidy.on("state:online", () => {this.setState({connected:true}); this.requestAll();});
@@ -107,13 +107,13 @@ class Mopy extends React.Component {
   updateMute(mute) { this.setState({mute: mute, muteIcon: mute ? "volume-off" : "volume-up"}); }
   updateCurrentTrack(track) {
     if (track) {
-      fetch('http://' + this.props.url + ':8000/songs/?uri=' + track.uri).then(result => result.json())
+      fetch('http://' + window.location.hostname + '/songs/?uri=' + track.uri).then(result => result.json())
         .then(items => { if (items.count === 1) {
           this.setState({lyrics: items.results[0].lyrics});
         } else {
           var payload = JSON.stringify({ uri: track.uri, artist: (track.artists ? track.artists[0].name : '?'),
             title: track.name });
-          fetch('http://' + this.props.url + ':8000/songs/', {
+          fetch('http://' + window.location.hostname + '/songs/', {
             method: 'POST', headers: {'Content-Type': 'application/json'}, body: payload
           }).catch(error => this.updateCurrentTrack(track))
             .then(results => results.json())
