@@ -26,6 +26,7 @@ SECRET_KEY = '%k3i3mnq4mff9!(*o=z3tb)osi#c9e6^s6i0w^k52y85d-!2o*'
 DEBUG = True
 
 ALLOWED_HOSTS = ['nausicaa', 'nausicaa.suginami', 'nausicaa.vpnim', 'localhost']
+ALLOWED_HOSTS += ['totoro', 'totoro.suginami', 'totoro.vpnim']
 
 
 # Application definition
