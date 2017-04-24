@@ -107,25 +107,16 @@ class Mopy extends React.Component {
   updateMute(mute) { this.setState({mute: mute, muteIcon: mute ? "volume-off" : "volume-up"}); }
   updateCurrentTrack(track) {
     if (track) {
-      fetch('http://' + window.location.hostname + '/songs/?uri=' + track.uri).then(result => result.json())
-        .then(items => { if (items.count === 1) {
-          this.setState({lyrics: items.results[0].lyrics});
-        } else {
-          var payload = JSON.stringify({ uri: track.uri, artist: (track.artists ? track.artists[0].name : '?'),
-            title: track.name });
-          fetch('http://' + window.location.hostname + '/songs/', {
-            method: 'POST', headers: {'Content-Type': 'application/json'}, body: payload
-          }).catch(error => this.updateCurrentTrack(track))
-            .then(results => results.json())
-            .catch(error => this.updateCurrentTrack(track))
-            .then(resp => this.setState({lyrics: resp.lyrics}))
-            .catch(error => this.updateCurrentTrack(track));
-        }});
+      var payload = JSON.stringify({ artist: (track.artists ? track.artists[0].name : '?'), title: track.name });
+      fetch('http://' + window.location.hostname + ':8000/lyrics/' + track.uri, {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: payload
+      })
+        .then(results => results.json())
+        .then(resp => this.setState({track: track, length: track.length, lyrics: resp.lyrics}));
       if (track.album) {
         fetch('https://api.spotify.com/v1/albums/' + track.album.uri.substring(14)).then(result => result.json())
           .then(data => this.setState({albumCover: data.images[1].url}));
       }
-      this.setState({track: track, length: track.length, lyrics: ''});
     }
   }
 

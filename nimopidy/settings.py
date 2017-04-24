@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['nausicaa', 'nausicaa.suginami', 'nausicaa.vpnim', 'localhost']
 ALLOWED_HOSTS += ['totoro', 'totoro.suginami', 'totoro.vpnim']
+if DEBUG:
+    ALLOWED_HOSTS += ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -42,6 +44,7 @@ INSTALLED_APPS = [
     'django_filters',
     'crispy_forms',
     'musicapp',
+    'nimopidy',
 ]
 
 MIDDLEWARE = [
