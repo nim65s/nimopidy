@@ -12,6 +12,9 @@ class Song(models.Model):
     def __str__(self):
         return f'{self.artist} - {self.title}'
 
+    def get_absolute_url(self):
+        return '/'
+
     def get_lyrics(self):
         self.lyrics = get_lyrics(self.artist, self.title)
         self.save()

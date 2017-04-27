@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'musicapp',
     'nimopidy',
+    'bootstrap3',
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,7 @@
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import UpdateView
 
 from rest_framework import viewsets
 
@@ -15,6 +17,19 @@ def lyrics(request, uri):
         song.title = request.POST.get('title')
         song.get_lyrics()
     return JsonResponse(song.json())
+
+
+def update_lyrics(request, uri):
+    song = get_object_or_404(Song, uri=uri)
+    song.get_lyrics()
+    return redirect('/')
+
+
+class SongUpdateView(UpdateView):
+    model = Song
+    fields = ['lyrics']
+    slug_field = 'uri'
+    slug_url_kwarg = 'uri'
 
 
 class SongViewSet(viewsets.ModelViewSet):

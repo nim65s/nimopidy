@@ -52,7 +52,11 @@ class Controls extends React.Component {
 class Lyrics extends React.Component {
   render() {
     return (
-      <ReactMarkdown source={this.props.lyrics} />
+      <div>
+        <a className="btn btn-default" role="button" href={'http://' + window.location.hostname + ':8000/change/' + this.props.uri}>Change</a>
+        <a className="btn btn-default" role="button" href={'http://' + window.location.hostname + ':8000/update/' + this.props.uri}>Update</a>
+        <ReactMarkdown source={this.props.lyrics} />
+      </div>
     );
   }
 }
@@ -148,7 +152,7 @@ class Mopy extends React.Component {
         <Progress onSeek={this.onSeek} max={this.state.length} now={this.state.now} label={this.state.nowstr}
           wheelCoef={100} active />
         <div className="clearfix" />
-        <Lyrics lyrics={this.state.lyrics} />
+        <Lyrics lyrics={this.state.lyrics} uri={this.state.track.uri} />
       </div>
       );
   }

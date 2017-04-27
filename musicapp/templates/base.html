@@ -1,4 +1,4 @@
-<!doctype html>
+{% load staticfiles %}<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -6,11 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="favicon.ico">
     <title>NiMoPiDy</title>
-    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 
   </head>
   <body>
-    {% block root %}{% endblock %}
-    {% include 'index.html' %}
+    {% block content %}{% endblock %}
   </body>
 </html>
