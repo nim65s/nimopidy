@@ -1,3 +1,5 @@
+from json import loads
+
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -36,3 +38,9 @@ class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.all()
     serializer_class = SongSerializer
     filter_fields = ('uri', 'artist', 'title')
+
+
+@csrf_exempt
+def webhooks(request):
+    print(loads(request.body))
+    return JsonResponse({})
