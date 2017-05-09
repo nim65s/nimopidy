@@ -1,5 +1,6 @@
 Django
 djangorestframework
+django-bootstrap3
 django-filter
 django-crispy-forms
 html2text
