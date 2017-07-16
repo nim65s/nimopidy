@@ -15,8 +15,9 @@ from .serializers import SongSerializer
 def lyrics(request, uri):
     song, created = Song.objects.get_or_create(uri=uri)
     if created:
-        song.artist = request.POST.get('artist')
-        song.title = request.POST.get('title')
+        data = loads(request.POST.get('json'))
+        song.artist = data['artist']
+        song.title = data['title']
         song.get_lyrics()
     return JsonResponse(song.json())
 

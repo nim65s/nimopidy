@@ -111,15 +111,15 @@ class Mopy extends React.Component {
   updateMute(mute) { this.setState({mute: mute, muteIcon: mute ? "volume-off" : "volume-up"}); }
   updateCurrentTrack(track) {
     if (track) {
-      var payload = JSON.stringify({ artist: (track.artists ? track.artists[0].name : '?'), title: track.name });
-      fetch('http://' + window.location.hostname + ':8000/lyrics/' + track.uri, {
-        method: 'POST', headers: {'Content-Type': 'application/json'}, body: payload
-      })
+      var data = new FormData();
+      data.append("json", JSON.stringify({ artist: (track.artists ? track.artists[0].name : '?'), title: track.name }));
+      fetch('http://' + window.location.hostname + ':8000/lyrics/' + track.uri, { method: 'POST', body: data })
         .then(results => results.json())
         .then(resp => this.setState({track: track, length: track.length, lyrics: resp.lyrics}));
       if (track.album) {
-        fetch('https://api.spotify.com/v1/albums/' + track.album.uri.substring(14)).then(result => result.json())
-          .then(data => this.setState({albumCover: data.images[1].url}));
+        //TODO: https://developer.spotify.com/web-api/authorization-guide/
+        //fetch('https://api.spotify.com/v1/albums/' + track.album.uri.substring(14)).then(result => result.json())
+          //.then(data => this.setState({albumCover: data.images[1].url}));
       }
     }
   }
