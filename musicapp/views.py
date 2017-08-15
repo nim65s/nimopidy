@@ -1,47 +1,22 @@
 from json import loads
 
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import UpdateView
 
+from channels import Channel
 from rest_framework import viewsets
 
-from .models import Song
-from .serializers import SongSerializer
+from .models import Track
+from .serializers import TrackSerializer
 
 
-@csrf_exempt
-def lyrics(request, uri):
-    song, created = Song.objects.get_or_create(uri=uri)
-    if created:
-        data = loads(request.POST.get('json'))
-        song.artist = data['artist']
-        song.title = data['title']
-        song.get_lyrics()
-    return JsonResponse(song.json())
-
-
-def update_lyrics(request, uri):
-    song = get_object_or_404(Song, uri=uri)
-    song.get_lyrics()
-    return redirect('/')
-
-
-class SongUpdateView(UpdateView):
-    model = Song
-    fields = ['lyrics']
-    slug_field = 'uri'
-    slug_url_kwarg = 'uri'
-
-
-class SongViewSet(viewsets.ModelViewSet):
-    queryset = Song.objects.all()
-    serializer_class = SongSerializer
+class TrackViewSet(viewsets.ModelViewSet):
+    queryset = Track.objects.all()
+    serializer_class = TrackSerializer
     filter_fields = ('uri', 'artist', 'title')
 
 
 @csrf_exempt
 def webhooks(request):
-    print(loads(request.body))
+    Channel('mopidy').send(loads(request.body))
     return JsonResponse({})

@@ -1,8 +1,13 @@
+asgi_redis
+beautifulsoup4
+channels
 Django
 djangorestframework
+django-autoslug
 django-bootstrap3
-django-filter
 django-crispy-forms
+django-filter
 html2text
-beautifulsoup4
+Pillow
 requests
+Twisted[http2,tls]

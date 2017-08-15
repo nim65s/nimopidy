@@ -1,8 +1,19 @@
 # NiMoPiDy
 
-## Quick deploy with docker:
+## Install
+
+setup virtualenv and redis, then:
 
 ```bash
-docker build -t nimopidy .
-docker run -p 8000:8000 --name nimopidy -t nimopidy python manage.py runserver 0.0.0.0:8000
+pip install -U -r requeriments.txt
+npm install
+npm run build
+./manage.py migrate
+./manage.py runserver 0.0.0.0:8000
 ```
+
+## TODO
+
+- django-knocker
+- snapcast
+- cover

@@ -1,5 +1,7 @@
 from django.contrib.admin import site
 
-from .models import Song
+from .models import Album, Artist, Track
 
-site.register(Song)
+site.register(Track)
+site.register(Album)
+site.register(Artist)

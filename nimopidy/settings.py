@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+PROJECT = 'nimopidy'
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -44,8 +46,9 @@ INSTALLED_APPS = [
     'django_filters',
     'crispy_forms',
     'musicapp',
-    'nimopidy',
+    PROJECT,
     'bootstrap3',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'nimopidy.urls'
+ROOT_URLCONF = f'{PROJECT}.urls'
 
 TEMPLATES = [
     {
@@ -77,7 +80,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'nimopidy.wsgi.application'
+WSGI_APPLICATION = f'{PROJECT}.wsgi.application'
 
 
 # Database
@@ -132,4 +135,14 @@ STATIC_URL = '/static/'
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'PAGE_SIZE': 10
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'asgi_redis.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
+        },
+        'ROUTING': f'{PROJECT}.routing.channel_routing',
+    },
 }
