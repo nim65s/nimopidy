@@ -30,9 +30,13 @@ class Track(NamedModel):
     album = models.ForeignKey(Album, blank=True, null=True, related_name='songs')
     lyrics = models.TextField(null=True, default=None)
     length = models.PositiveIntegerField()
+    disc_no = models.PositiveSmallIntegerField(default=0)
+    track_no = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ['date', 'album__name', 'disc_no', 'track_no', 'name']
 
     def get_lyrics(self):
-        print('get lyrics for', self)
         self.lyrics = get_lyrics(self.artists.first(), self.name)
         self.save()
 
