@@ -2,11 +2,7 @@ asgi_redis
 beautifulsoup4
 channels
 Django
-djangorestframework
-django-autoslug
 django-bootstrap3
-django-crispy-forms
-django-filter
 html2text
 Pillow
 requests
