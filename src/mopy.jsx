@@ -92,8 +92,8 @@ class Mopy extends React.Component {
     return (
       <div>
         <h1>{this.state.track.artists}</h1>
-        <h2>{this.state.track.album}</h2>
-        <h3>{this.state.track.name}</h3>
+        <h2>{this.state.track.name}</h2>
+        <h3>{this.state.track.album}</h3>
         <Controls handlers={this.controlHandlers} status={this.state.connected} />
         <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
         <h2>Volume</h2>
