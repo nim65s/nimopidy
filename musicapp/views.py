@@ -14,7 +14,8 @@ def webhooks(request):
     return JsonResponse({})
 
 
-def snapcast(request, target, muted, percent):
-    telnet_snapcast("Client.SetVolume", {'id': target, 'volume': {'muted': bool(int(muted)), 'percent': int(percent)}})
+@csrf_exempt
+def snapcast(request):
+    telnet_snapcast("Client.SetVolume", loads(request.body))
     Channel('snapcast').send({})
     return JsonResponse({})

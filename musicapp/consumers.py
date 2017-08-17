@@ -89,7 +89,7 @@ def mopidy(message):
 
 def snapcast(message):
     gps = telnet_snapcast("Server.GetStatus")['result']['server']['groups']
-    clients = [dict(mac=cli['host']['mac'], **cli['config']['volume']) for gp in gps for cli in gp['clients']]
+    clients = [dict(**cli['host'], **cli['config']['volume']) for gp in gps for cli in gp['clients']]
     Group('clients').send({'text': dumps({
         'snapclients': clients,
     })})
