@@ -100,10 +100,12 @@ class Mopy extends React.Component {
         <Volume onVolume={this.onVolume.bind(this)} now={this.state.volume} name="général" onMute={this.onMute.bind(this)} muted={this.state.mute} />
         <Snap snapclients={this.state.snapclients} />
         <h2>Lyrics</h2>
-        <a className="btn btn-default" role="button" href={'http://' + window.location.hostname + ':8000/change/' + this.state.track.uri}>Change</a>
-        <a className="btn btn-default" role="button" href={'http://' + window.location.hostname + ':8000/update/' + this.state.track.uri}>Update</a>
+        <ButtonGroup>
+          <Button href={'http://' + window.location.hostname + '/change/' + this.state.track.uri}>Change</Button>
+          <Button href={'http://' + window.location.hostname + '/update/' + this.state.track.uri}>Update</Button>
+        </ButtonGroup>
         <ReactMarkdown source={this.state.track.lyrics} />
-        <WebSocket url='ws://localhost:8000/' onMessage={this.handleData.bind(this)} />
+        <WebSocket url={'ws://' + window.location.hostname} onMessage={this.handleData.bind(this)} />
       </div>
     );
   }

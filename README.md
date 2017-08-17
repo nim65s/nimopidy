@@ -9,7 +9,7 @@ pip install -U -r requeriments.txt
 npm install
 npm run build
 ./manage.py migrate
-./manage.py runserver 0.0.0.0:8000
+./manage.py runserver
 ```
 
 ## TODO
