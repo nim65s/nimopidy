@@ -1,3 +1,6 @@
+from json import dumps, loads
+from telnetlib import Telnet
+
 import html2text
 import requests
 from bs4 import BeautifulSoup
@@ -27,3 +30,12 @@ def get_lyrics(artist, song):
             disambiguation = requests.get(WIKIA + soup.find('div', id='mw-content-text').find('a').attrs['href'])
             lyrics = soup_to_lyrics(disambiguation.content)
     return html2text.html2text(str(lyrics)[1:-1]) if lyrics else req.url
+
+
+def telnet_snapcast(method, params=None, server='localhost', port=1705):
+    with Telnet(server, port) as tn:
+        data = {"id": 1, "jsonrpc": "2.0", "method": method}
+        if params is not None:
+            data["params"] = params
+        tn.write(dumps(data).encode() + b'\r\n')
+        return loads(tn.read_until(b'\r\n').decode())
