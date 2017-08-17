@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import Mopidy from 'mopidy';
 import Progress from './progress';
+import Volume from './volume';
 import ReactMarkdown from 'react-markdown';
 import WebSocket from 'react-websocket';
 
@@ -15,7 +16,7 @@ class Controls extends React.Component {
 
   render() {
     return (
-      <ButtonGroup>
+      <ButtonGroup className="pull-left">
         <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="previous"><Glyphicon glyph="step-backward" /></Button>
         <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="play"    ><Glyphicon glyph="play"          /></Button>
         <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="pause"   ><Glyphicon glyph="pause"         /></Button>
@@ -35,16 +36,13 @@ class Mopy extends React.Component {
       nowstr: '',
       volume: 100,
       mute: false,
-      muteIcon: "volume-up",
       track: '',
       state: '',
     }
     this.controlHandlers = this.controlHandlers.bind(this)
     this.updateVolume = this.updateVolume.bind(this)
     this.updateMute = this.updateMute.bind(this)
-    this.onVolume = this.onVolume.bind(this)
     this.onMute = this.onMute.bind(this)
-    this.onSeek = this.onSeek.bind(this)
   }
 
   componentDidMount() {
@@ -90,16 +88,17 @@ class Mopy extends React.Component {
   render() {
     return (
       <div>
-        <img src={this.state.track.cover} alt={this.state.track.album} className="pull-left" />
+        <img src={this.state.track.cover} alt={this.state.track.album} className="pull-right" />
         <h1>{this.state.track.artists}</h1>
         <h2>{this.state.track.album}</h2>
         <h3>{this.state.track.name}</h3>
         <Controls handlers={this.controlHandlers} status={this.state.connected} />
-        <Button bsSize="large" onClick={this.onMute} disabled={!this.state.connected}><Glyphicon glyph={this.state.muteIcon} /></Button>
-        <Progress onSeek={this.onVolume} max={100} now={this.state.volume} label={this.state.volume} wheelCoef={.1} />
-        <Progress onSeek={this.onSeek} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
+        <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
+        <h2>Volume</h2>
+        <Volume onVolume={this.onVolume.bind(this)} now={this.state.volume} name="général" onMute={this.onMute.bind(this)} muted={this.state.mute} />
         <a className="btn btn-default" role="button" href={'http://' + window.location.hostname + ':8000/change/' + this.state.track.uri}>Change</a>
         <a className="btn btn-default" role="button" href={'http://' + window.location.hostname + ':8000/update/' + this.state.track.uri}>Update</a>
+        <h2>Lyrics</h2>
         <ReactMarkdown source={this.state.track.lyrics} />
         <WebSocket url='ws://localhost:8000/' onMessage={this.handleData.bind(this)} />
       </div>
