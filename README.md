@@ -14,6 +14,6 @@ npm run build
 
 ## TODO
 
-- django-knocker
-- snapcast
+- django-knocker (desktop notifications)
 - cover
+- playlist management
