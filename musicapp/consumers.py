@@ -36,6 +36,7 @@ def mopidy(message):
                         for artist_data in album_data['artists']:
                             artist_inst, _ = get_or_create(Artist, artist_data)
                             album_inst.artists.add(artist_inst)
+                        album_inst.get_cover()
                         album_inst.save()
                 track_inst.album = album_inst
             track_inst.save()

@@ -17,7 +17,7 @@ class Controls extends React.Component {
 
   render() {
     return (
-      <ButtonGroup className="pull-left">
+      <ButtonGroup>
         <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="previous"><Glyphicon glyph="step-backward" /></Button>
         <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="play"    ><Glyphicon glyph="play"          /></Button>
         <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="pause"   ><Glyphicon glyph="pause"         /></Button>
@@ -91,11 +91,14 @@ class Mopy extends React.Component {
   render() {
     return (
       <div>
-        <h1>{this.state.track.artists}</h1>
-        <h2>{this.state.track.name}</h2>
-        <h3>{this.state.track.album}</h3>
-        <Controls handlers={this.controlHandlers} status={this.state.connected} />
-        <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
+        <div className="clearfix">
+          <img src={this.state.track.cover} alt={this.state.track.album} className="pull-left" />
+          <h1>{this.state.track.artists}</h1>
+          <h2>{this.state.track.name}</h2>
+          <h3>{this.state.track.album}</h3>
+          <Controls handlers={this.controlHandlers} status={this.state.connected} />
+          <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
+        </div>
         <h2>Volume</h2>
         <Volume onVolume={this.onVolume.bind(this)} now={this.state.volume} name="général" onMute={this.onMute.bind(this)} muted={this.state.mute} />
         <Snap snapclients={this.state.snapclients} />

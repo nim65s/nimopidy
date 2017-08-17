@@ -15,5 +15,4 @@ npm run build
 ## TODO
 
 - django-knocker (desktop notifications)
-- cover
 - playlist management
