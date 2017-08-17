@@ -38,6 +38,7 @@ class Mopy extends React.Component {
       mute: false,
       track: '',
       state: '',
+      snapclients: '',
     }
     this.controlHandlers = this.controlHandlers.bind(this)
     this.updateVolume = this.updateVolume.bind(this)
@@ -63,6 +64,7 @@ class Mopy extends React.Component {
     let result = JSON.parse(data);
     if (result.track) this.setState({track: result.track});
     if (result.state) this.setState({state: result.state});
+    if (result.snapclients) this.setState({snapclients: result.snapclients});
     if (result.time_position) {
       this.setState({now: result.time_position, nowstr: new Date(result.time_position).toISOString().substr(14,5)});
     }
@@ -88,7 +90,6 @@ class Mopy extends React.Component {
   render() {
     return (
       <div>
-        <img src={this.state.track.cover} alt={this.state.track.album} className="pull-right" />
         <h1>{this.state.track.artists}</h1>
         <h2>{this.state.track.album}</h2>
         <h3>{this.state.track.name}</h3>
@@ -96,9 +97,9 @@ class Mopy extends React.Component {
         <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
         <h2>Volume</h2>
         <Volume onVolume={this.onVolume.bind(this)} now={this.state.volume} name="général" onMute={this.onMute.bind(this)} muted={this.state.mute} />
+        <h2>Lyrics</h2>
         <a className="btn btn-default" role="button" href={'http://' + window.location.hostname + ':8000/change/' + this.state.track.uri}>Change</a>
         <a className="btn btn-default" role="button" href={'http://' + window.location.hostname + ':8000/update/' + this.state.track.uri}>Update</a>
-        <h2>Lyrics</h2>
         <ReactMarkdown source={this.state.track.lyrics} />
         <WebSocket url='ws://localhost:8000/' onMessage={this.handleData.bind(this)} />
       </div>

@@ -1,4 +1,4 @@
-from json import dumps, loads
+from json import dumps
 
 from channels import Channel, Group
 
@@ -9,7 +9,7 @@ from .utils import telnet_snapcast
 def ws_connect(message):
     message.reply_channel.send({'accept': True})
     Group('clients').add(message.reply_channel)
-    Channel('snapcast').send()
+    Channel('snapcast').send({})
 
 
 def ws_disconnect(message):
@@ -87,17 +87,9 @@ def mopidy(message):
         print(message.content)
 
 
-def ws_receive(message):
-    telnet_snapcast("Client.SetVolume", loads(message.content['text']))
-    Channel('snapcast').send()
-
-
 def snapcast(message):
-    rep = telnet_snapcast("Server.GetStatus")
-    clients = [client['config']['volume'] for gp in rep['result']['server']['groups'] for client in gp['clients']]
+    gps = telnet_snapcast("Server.GetStatus")['result']['server']['groups']
+    clients = [dict(mac=cli['host']['mac'], **cli['config']['volume']) for gp in gps for cli in gp['clients']]
     Group('clients').send({'text': dumps({
         'snapclients': clients,
     })})
-
-
-# {'id': target, 'volume': {'muted': muted, 'percent': percent}}
