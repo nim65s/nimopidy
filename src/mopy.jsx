@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { Button, ButtonGroup, Glyphicon, Collapse } from 'react-bootstrap';
 import Mopidy from 'mopidy';
 import Progress from './progress';
 import Volume from './volume';
@@ -40,6 +40,7 @@ class Mopy extends React.Component {
       track: '',
       state: '',
       snapclients: '',
+      open: false,
     }
     this.controlHandlers = this.controlHandlers.bind(this)
     this.updateVolume = this.updateVolume.bind(this)
@@ -97,17 +98,26 @@ class Mopy extends React.Component {
           <h2>{this.state.track.name}</h2>
           <h3>{this.state.track.album}</h3>
           <Controls handlers={this.controlHandlers} status={this.state.connected} />
+          <ButtonGroup>
+            <Button bsSize="large" href={'http://' + window.location.hostname + '/update/' + this.state.track.uri}><Glyphicon glyph="refresh" /></Button>
+            <Button bsSize="large" href={'http://' + window.location.hostname + '/change/' + this.state.track.uri}><Glyphicon glyph="pencil" /></Button>
+          </ButtonGroup>
+          <Button bsSize="large" onClick={ ()=> this.setState({ open: !this.state.open })}>
+            <Glyphicon glyph="volume-up" />
+          </Button>
           <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
         </div>
-        <h2>Volume</h2>
-        <Volume onVolume={this.onVolume.bind(this)} now={this.state.volume} name="général" onMute={this.onMute.bind(this)} muted={this.state.mute} />
-        <Snap snapclients={this.state.snapclients} />
-        <h2>Lyrics</h2>
-        <ButtonGroup>
-          <Button href={'http://' + window.location.hostname + '/change/' + this.state.track.uri}>Change</Button>
-          <Button href={'http://' + window.location.hostname + '/update/' + this.state.track.uri}>Update</Button>
-        </ButtonGroup>
+
+        <Collapse in={this.state.open}>
+          <div>
+            <h2>Volume</h2>
+            <Volume onVolume={this.onVolume.bind(this)} now={this.state.volume} name="général" onMute={this.onMute.bind(this)} muted={this.state.mute} />
+            <Snap snapclients={this.state.snapclients} />
+          </div>
+        </Collapse>
+
         <ReactMarkdown source={this.state.track.lyrics} />
+
         <WebSocket url={'ws://' + window.location.hostname} onMessage={this.handleData.bind(this)} />
       </div>
     );
