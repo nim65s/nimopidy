@@ -1,3 +1,9 @@
 .progress { height: 46px; }
 
 body { text-align: center; }
+
+#lyrics {
+          column-width: 300px;
+     -moz-column-width: 300px;
+  -webkit-column-width: 300px;
+}

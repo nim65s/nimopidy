@@ -121,7 +121,9 @@ class Mopy extends React.Component {
           </Modal.Footer>
         </Modal>
 
-        <ReactMarkdown source={this.state.track.lyrics} />
+        <div id="lyrics">
+          <ReactMarkdown source={this.state.track.lyrics} />
+        </div>
 
         <WebSocket url={'ws://' + window.location.hostname} onMessage={this.handleData.bind(this)} />
       </div>

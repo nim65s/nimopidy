@@ -27,7 +27,7 @@ SECRET_KEY = '%k3i3mnq4mff9!(*o=z3tb)osi#c9e6^s6i0w^k52y85d-!2o*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['nausicaa', 'nausicaa.suginami', 'nausicaa.vpnim', 'localhost']
+ALLOWED_HOSTS = ['nausicaa', 'nausicaa.suginami', 'nausicaa.vpnim', 'localhost', '192.168.1.3']
 ALLOWED_HOSTS += ['totoro', 'totoro.suginami', 'totoro.vpnim']
 if DEBUG:
     ALLOWED_HOSTS += ['127.0.0.1', 'localhost']
