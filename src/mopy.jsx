@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonGroup, Glyphicon, Collapse } from 'react-bootstrap';
+import { Button, ButtonGroup, Glyphicon, Modal } from 'react-bootstrap';
 import Mopidy from 'mopidy';
 import Progress from './progress';
 import Volume from './volume';
@@ -102,19 +102,24 @@ class Mopy extends React.Component {
             <Button bsSize="large" href={'http://' + window.location.hostname + '/update/' + this.state.track.uri}><Glyphicon glyph="refresh" /></Button>
             <Button bsSize="large" href={'http://' + window.location.hostname + '/change/' + this.state.track.uri}><Glyphicon glyph="pencil" /></Button>
           </ButtonGroup>
-          <Button bsSize="large" onClick={ ()=> this.setState({ open: !this.state.open })}>
+          <Button bsSize="large" onClick={ ()=> this.setState({ open: true })}>
             <Glyphicon glyph="volume-up" />
           </Button>
           <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
         </div>
 
-        <Collapse in={this.state.open}>
-          <div>
-            <h2>Volume</h2>
+        <Modal show={this.state.open} onHide={() => this.setState({open: false})}>
+          <Modal.Header closeButton>
+            <Modal.Title>Volume</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
             <Volume onVolume={this.onVolume.bind(this)} now={this.state.volume} name="général" onMute={this.onMute.bind(this)} muted={this.state.mute} />
             <Snap snapclients={this.state.snapclients} />
-          </div>
-        </Collapse>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={() => this.setState({open: false})}>Close</Button>
+          </Modal.Footer>
+        </Modal>
 
         <ReactMarkdown source={this.state.track.lyrics} />
 
