@@ -5,7 +5,7 @@
 setup virtualenv and redis, then:
 
 ```bash
-pip install -U -r requeriments.txt
+pip install -U -r requirements.txt
 npm install
 npm run build
 ./manage.py migrate
