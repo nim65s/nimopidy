@@ -21,6 +21,7 @@ class Result extends React.Component {
         <td>{this.props.result.name}</td>
         <td>{this.props.result.artists ? this.props.result.artists[0].name : ''}</td>
         <td>{this.props.result.album ? this.props.result.album.name : ''}</td>
+        <td>{this.props.uri.split(':')[0]}</td>
         <td>{length}</td>
         <td>
           <Button bsSize="sm" bsStyle={this.state.added ? "success" : ""} onClick={this.add.bind(this)} disabled={this.state.added}>
@@ -42,8 +43,8 @@ class Search extends React.Component {
 
   handleChange(e) {
     if (e.target.value.length > 4) {
-      this.props.mopidy.library.search({any: [e.target.value], uris: ['spotify:']})
-        .done(results => this.setState({results: results[0].tracks}));
+      this.props.mopidy.library.search({any: [e.target.value]})
+        .done(results => this.setState({results: results}));
     }
   }
 
@@ -51,7 +52,11 @@ class Search extends React.Component {
     var results = [];
     if (this.state.results) {
       for (var i = 0; i < this.state.results.length; i++) {
-        results.push(<Result result={this.state.results[i]} mopidy={this.props.mopidy} />);
+        if (this.state.results[i].tracks) {
+          for (var j = 0; j < this.state.results[i].tracks.length; j++) {
+            results.push(<Result result={this.state.results[i].tracks[j]} uri={this.state.results[i].uri} mopidy={this.props.mopidy} />);
+          }
+        }
       }
     }
     return (
@@ -65,6 +70,7 @@ class Search extends React.Component {
               <th>Title</th>
               <th>Artist</th>
               <th>Album</th>
+              <th>Source</th>
               <th>Time</th>
               <th></th>
             </tr>
