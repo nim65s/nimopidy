@@ -4,6 +4,7 @@ import Mopidy from 'mopidy';
 import Progress from './progress';
 import Volume from './volume';
 import Snap from './snap';
+import TrackList from './tracklist';
 import ReactMarkdown from 'react-markdown';
 import WebSocket from 'react-websocket';
 
@@ -40,9 +41,12 @@ class Mopy extends React.Component {
       track: '',
       state: '',
       snapclients: '',
-      open: false,
+      showSound: false,
+      showTrackList: false,
+      tracks: [],
     }
     this.controlHandlers = this.controlHandlers.bind(this)
+    this.updateTrackList = this.updateTrackList.bind(this)
     this.updateVolume = this.updateVolume.bind(this)
     this.updateMute = this.updateMute.bind(this)
     this.onMute = this.onMute.bind(this)
@@ -57,10 +61,12 @@ class Mopy extends React.Component {
     this.mopidy.on("state:offline", () => {this.setState({connected:false});});
     this.mopidy.on('event:volumeChanged', (e) => { this.updateVolume(e.volume); });
     this.mopidy.on('event:muteChanged', (e) => { this.updateMute(e.mute); });
+    this.mopidy.on('event:tracklistChanged', () => { this.updateTrackList(); });
   }
 
   updateVolume(vol) { this.setState({volume: vol}); }
   updateMute(mute) { this.setState({mute: mute, muteIcon: mute ? "volume-off" : "volume-up"}); }
+  updateTrackList() { this.mopidy.tracklist.getTlTracks().done( tracks => this.setState({tracks: tracks})); }
 
   handleData(data) {
     let result = JSON.parse(data);
@@ -102,13 +108,12 @@ class Mopy extends React.Component {
             <Button bsSize="large" href={'http://' + window.location.hostname + '/update/' + this.state.track.uri}><Glyphicon glyph="refresh" /></Button>
             <Button bsSize="large" href={'http://' + window.location.hostname + '/change/' + this.state.track.uri}><Glyphicon glyph="pencil" /></Button>
           </ButtonGroup>
-          <Button bsSize="large" onClick={ ()=> this.setState({ open: true })}>
-            <Glyphicon glyph="volume-up" />
-          </Button>
+          <Button bsSize="large" onClick={ () => this.setState({ showSound: true })}><Glyphicon glyph="volume-up" /></Button>
+          <Button bsSize="large" onClick={ () => this.setState({ showTrackList: true })}><Glyphicon glyph="list" /></Button>
           <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
         </div>
 
-        <Modal show={this.state.open} onHide={() => this.setState({open: false})}>
+        <Modal show={this.state.showSound} onHide={() => this.setState({showSound: false})}>
           <Modal.Header closeButton>
             <Modal.Title>Volume</Modal.Title>
           </Modal.Header>
@@ -117,9 +122,22 @@ class Mopy extends React.Component {
             <Snap snapclients={this.state.snapclients} />
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={() => this.setState({open: false})}>Close</Button>
+            <Button onClick={() => this.setState({showSound: false})}>Close</Button>
           </Modal.Footer>
         </Modal>
+
+        <Modal show={this.state.showTrackList} onHide={() => this.setState({showTrackList: false})}>
+          <Modal.Header closeButton>
+            <Modal.Title>Track list</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={() => this.setState({showTrackList: false})}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+
+        <TrackList tracks={this.state.tracks} max={100} page={1}/>
 
         <div id="lyrics">
           <ReactMarkdown source={this.state.track.lyrics} />
