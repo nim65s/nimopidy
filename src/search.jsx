@@ -1,5 +1,5 @@
 import React from 'react';
-import { Glyphicon, Table, Button, FormControl } from 'react-bootstrap';
+import { Col, ControlLabel, Checkbox, FormGroup, Form, Glyphicon, Table, Button, FormControl } from 'react-bootstrap';
 import './search.css';
 
 class Result extends React.Component {
@@ -25,9 +25,9 @@ class Result extends React.Component {
         <td>{this.props.uri.split(':')[0]}</td>
         <td>{length}</td>
         <td>
-          <Button bsSize="sm" bsStyle={this.state.added == this.props.result.uri ? "success" : ""}
-            onClick={this.add.bind(this)} disabled={this.state.adde == this.props.result.uri }>
-            <Glyphicon glyph={this.state.added == this.props.result.uri ? "ok" : "plus"} />
+          <Button bsSize="sm" bsStyle={this.state.added === this.props.result.uri ? "success" : ""}
+            onClick={this.add.bind(this)} disabled={this.state.added === this.props.result.uri }>
+            <Glyphicon glyph={this.state.added === this.props.result.uri ? "ok" : "plus"} />
           </Button>
         </td>
       </tr>
@@ -41,20 +41,24 @@ class Search extends React.Component {
     this.state = {
       any: '',
       results: [],
-      searching: [],
+      searching: false,
+      uris: ["spotify:"],
     }
   }
 
-  handleChange(event) {
-    this.setState({any: event.target.value});
+  handleAny(event) { this.setState({ any: event.target.value}); }
+  handleUris(event) {
+    var uris = [];
+    for (var i=0; i < event.target.options.length; i++) {
+      if (event.target.options[i].selected) { uris.push(event.target.options[i].value); }
+    }
+    this.setState({uris: uris});
   }
 
   handleSubmit(event) {
-    if (this.state.any.length > 4) {
-      this.setState({searching: <Glyphicon glyph="refresh" className="gly-spin" />});
-      this.props.mopidy.library.search({any: [this.state.any]})
-        .done(results => this.setState({results: results, searching: []}));
-    }
+    this.setState({searching: true});
+    this.props.mopidy.library.search({any: this.state.any.split(' '), uris: this.state.uris})
+      .done(results => this.setState({results: results, searching: false}));
     event.preventDefault();
   }
 
@@ -71,10 +75,25 @@ class Search extends React.Component {
     }
     return (
       <div>
-        <form onSubmit={this.handleSubmit.bind(this)}>
-          <FormControl type="text" placeholder="Any Query" value={this.state.value} onChange={this.handleChange.bind(this)} />
-        </form>
-        {this.state.searching}
+        <Form horizontal onSubmit={this.handleSubmit.bind(this)}>
+          <FormGroup>
+            <Col componentClass={ControlLabel} sm={2}>Query</Col>
+            <Col sm={10} ><FormControl type="text" placeholder="Query" value={this.state.value} onChange={this.handleAny.bind(this)} /></Col>
+          </FormGroup>
+          <FormGroup controlId="uris">
+            <Col componentClass={ControlLabel} sm={2}>Sources</Col>
+            <Col sm={10}><FormControl componentClass="select" multiple value={this.state.uris} onChange={this.handleUris.bind(this)} >
+              <option value="spotify:">Spotify</option>
+              <option value="youtube:">Youtube</option>
+              <option value="local:">Local</option>
+            </FormControl></Col>
+          </FormGroup>
+          <FormGroup>
+            <Col smOffset={2} sm={10}>
+              <Button bsSize="lg" type="submit"><Glyphicon glyph={this.state.searching ? "refresh" : "search"} /></Button>
+            </Col>
+          </FormGroup>
+        </Form>
         <Table striped condensed hover>
           <thead>
             <tr>

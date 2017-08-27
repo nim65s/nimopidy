@@ -10,6 +10,7 @@ import PlayLists from './playlists';
 import Controls from './controls';
 import ReactMarkdown from 'react-markdown';
 import WebSocket from 'react-websocket';
+import './mopy.css';
 
 class Mopy extends React.Component {
   constructor(props){
@@ -86,18 +87,15 @@ class Mopy extends React.Component {
           <h2>{this.state.track.name}</h2>
           <h3>{this.state.track.album}</h3>
           <Controls handlers={this.controlHandlers} status={this.state.connected} />
-          <ButtonGroup>
-            <Button bsSize="large" href={'http://' + window.location.hostname + '/update/' + this.state.track.uri}><Glyphicon glyph="refresh" /></Button>
-            <Button bsSize="large" href={'http://' + window.location.hostname + '/change/' + this.state.track.uri}><Glyphicon glyph="pencil" /></Button>
-          </ButtonGroup>
           <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
         </div>
-        <Tabs defaultActiveKey={2} >
-          <Tab eventKey={1} title={<Glyphicon glyph="music" />} ><ReactMarkdown source={this.state.track.lyrics} /></Tab>
-          <Tab eventKey={2} title={<Glyphicon glyph="list" />} ><TrackList tracks={this.state.tracks} mopidy={this.mopidy} /></Tab>
-          <Tab eventKey={3} title={<Glyphicon glyph="search" />} ><Search mopidy={this.mopidy} /></Tab>
-          <Tab eventKey={4} title={<Glyphicon glyph="th-list" />} ><PlayLists mopidy={this.mopidy} /></Tab>
-          <Tab eventKey={5} title={<Glyphicon glyph="volume-up" />} >
+        <Tabs defaultActiveKey={3} >
+          <Tab eventKey={1} title={<Glyphicon glyph="pencil" />} >TODO</Tab>
+          <Tab eventKey={2} title={<Glyphicon glyph="music" />} ><ReactMarkdown source={this.state.track.lyrics} className="lyrics" /></Tab>
+          <Tab eventKey={3} title={<Glyphicon glyph="list" />} ><TrackList tracks={this.state.tracks} mopidy={this.mopidy} /></Tab>
+          <Tab eventKey={4} title={<Glyphicon glyph="search" />} ><Search mopidy={this.mopidy} /></Tab>
+          <Tab eventKey={5} title={<Glyphicon glyph="th-list" />} ><PlayLists mopidy={this.mopidy} /></Tab>
+          <Tab eventKey={6} title={<Glyphicon glyph="volume-up" />} >
             <Volume onVolume={this.onVolume.bind(this)} now={this.state.volume} name="général" onMute={this.onMute.bind(this)} muted={this.state.mute} />
             <Snap snapclients={this.state.snapclients} />
           </Tab>
