@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonGroup, Glyphicon, Table, Button } from 'react-bootstrap';
+import { Glyphicon, Table, Button } from 'react-bootstrap';
 
 class PlayList extends React.Component {
   activate() {

@@ -7,29 +7,9 @@ import Snap from './snap';
 import TrackList from './tracklist';
 import Search from './search';
 import PlayLists from './playlists';
+import Controls from './controls';
 import ReactMarkdown from 'react-markdown';
 import WebSocket from 'react-websocket';
-
-class Controls extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handlers = this.handlers.bind(this);
-  }
-
-  handlers(e) { this.props.handlers(e.target.name || e.target.parentElement.name); }
-
-  render() {
-    return (
-      <ButtonGroup>
-        <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="previous"><Glyphicon glyph="step-backward" /></Button>
-        <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="play"    ><Glyphicon glyph="play"          /></Button>
-        <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="pause"   ><Glyphicon glyph="pause"         /></Button>
-        <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="stop"    ><Glyphicon glyph="stop"          /></Button>
-        <Button bsSize="large" onClick={this.handlers} disabled={!this.props.status} name="next"    ><Glyphicon glyph="step-forward"  /></Button>
-      </ButtonGroup>
-    );
-  }
-}
 
 class Mopy extends React.Component {
   constructor(props){
