@@ -44,6 +44,7 @@ class Mopy extends React.Component {
       showSound: false,
       showTrackList: false,
       tracks: [],
+      page: 1,
     }
     this.controlHandlers = this.controlHandlers.bind(this)
     this.updateTrackList = this.updateTrackList.bind(this)
@@ -62,11 +63,12 @@ class Mopy extends React.Component {
     this.mopidy.on('event:volumeChanged', (e) => { this.updateVolume(e.volume); });
     this.mopidy.on('event:muteChanged', (e) => { this.updateMute(e.mute); });
     this.mopidy.on('event:tracklistChanged', () => { this.updateTrackList(); });
+    setTimeout(this.updateTrackList, 1000);
   }
 
   updateVolume(vol) { this.setState({volume: vol}); }
   updateMute(mute) { this.setState({mute: mute, muteIcon: mute ? "volume-off" : "volume-up"}); }
-  updateTrackList() { this.mopidy.tracklist.getTlTracks().done( tracks => this.setState({tracks: tracks})); }
+  updateTrackList() { this.mopidy.tracklist.slice({ start: 0, end: 100}).done( tracks => this.setState({tracks: tracks})); }
 
   handleData(data) {
     let result = JSON.parse(data);
@@ -94,7 +96,6 @@ class Mopy extends React.Component {
   }
 
   controlHandlers(command) { if (this.state.connected) { this.mopidy.playback[command](); }}
-
   render() {
     return (
       <div>
@@ -137,7 +138,7 @@ class Mopy extends React.Component {
           </Modal.Footer>
         </Modal>
 
-        <TrackList tracks={this.state.tracks} max={100} page={1}/>
+        <TrackList tracks={this.state.tracks} mopidy={this.mopidy} />
 
         <div id="lyrics">
           <ReactMarkdown source={this.state.track.lyrics} />

@@ -1,8 +1,14 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { ButtonGroup, Glyphicon, Table, Button } from 'react-bootstrap';
 
 class Track extends React.Component {
+
+  up() { this.props.mopidy.tracklist.move({ start: this.props.n, end: this.props.n, to_position: this.props.n-1}); }
+  down() { this.props.mopidy.tracklist.move({ start: this.props.n, end: this.props.n, to_position: this.props.n+1}); }
+  del() { this.props.mopidy.tracklist.remove({ tlid: [this.props.track.tlid] }); }
+
   render() {
+    if (this.props.track) {
     var length = new Date(this.props.track.track.length).toISOString().substr(14,5);
     return (
       <tr>
@@ -11,19 +17,24 @@ class Track extends React.Component {
         <td>{this.props.track.track.artists[0].name}</td>
         <td>{this.props.track.track.album.name}</td>
         <td>{length}</td>
+        <td><ButtonGroup>
+          <Button bsSize="xs" onClick={this.up.bind(this)} disabled={this.props.n == 0} ><Glyphicon glyph="arrow-up" /></Button>
+          <Button bsSize="xs" onClick={this.down.bind(this)}><Glyphicon glyph="arrow-down" /></Button>
+          <Button bsSize="xs" onClick={this.del.bind(this)} disabled={this.props.n == 0} ><Glyphicon glyph="remove" /></Button>
+        </ButtonGroup></td>
       </tr>
     );
+    } else { return <tr />; }
   }
 }
 
 class TrackList extends React.Component {
   render() {
-    var tracks = [];
     if (this.props.tracks) {
-      for (var i = this.props.max * (this.props.page - 1); i < Math.min(this.props.tracks.length, this.props.max * this.props.page); i++) {
-        tracks.push(<Track track={this.props.tracks[i]} />);
+    var tracks = [];
+      for (var i = 0; i < this.props.tracks.length; i++) {
+        tracks.push(<Track track={this.props.tracks[i]} n={i} mopidy={this.props.mopidy} />);
       }
-    }
     return (
       <Table striped condensed hover>
         <thead>
@@ -33,6 +44,7 @@ class TrackList extends React.Component {
             <th>Artist</th>
             <th>Album</th>
             <th>Time</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -40,6 +52,7 @@ class TrackList extends React.Component {
         </tbody>
       </Table>
       );
+    } else { return <Table />; }
   }
 }
 
