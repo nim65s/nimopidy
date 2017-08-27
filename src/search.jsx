@@ -56,9 +56,11 @@ class Search extends React.Component {
   }
 
   handleSubmit(event) {
-    this.setState({searching: true});
-    this.props.mopidy.library.search({any: this.state.any.split(' '), uris: this.state.uris})
-      .done(results => this.setState({results: results, searching: false}));
+    if (this.state.any) {
+      this.setState({searching: true});
+      this.props.mopidy.library.search({any: this.state.any.split(' '), uris: this.state.uris})
+        .done(results => this.setState({results: results, searching: false}));
+    }
     event.preventDefault();
   }
 
