@@ -13,7 +13,7 @@ class PlayList extends React.Component {
       <tr>
         <td><Button onClick={this.activate.bind(this)}><Glyphicon glyph={this.props.playlist.active ? "check" : "unchecked"} /></Button></td>
         <td>{this.props.playlist.name}</td>
-        <td>{this.props.playlist.uri}</td>
+        <td>{this.props.playlist.uri.split(':')[0]}</td>
       </tr>
     );
   }
@@ -42,7 +42,16 @@ class PlayLists extends React.Component {
       }
       return (
         <Table striped condensed hover>
-          {playlists}
+          <thead>
+            <tr>
+              <th>Active</th>
+              <th>Name</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            {playlists}
+          </tbody>
         </Table>
         );
     } else { return <Table />; }
