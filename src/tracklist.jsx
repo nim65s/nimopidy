@@ -16,7 +16,7 @@ class Track extends React.Component {
       <tr>
         <td>{this.props.track.track.name}</td>
         <td>{this.props.track.track.artists ? this.props.track.track.artists[0].name : ''}</td>
-        <td>{this.props.track.track.album ? this.props.track.track.name : ''}</td>
+        <td>{this.props.track.track.album ? this.props.track.track.album.name : ''}</td>
         <td>{length}</td>
         <td><ButtonGroup>
           <Button bsSize="xs" onClick={this.first.bind(this)} disabled={this.props.n < 2} ><Glyphicon glyph="chevron-up" /></Button>
