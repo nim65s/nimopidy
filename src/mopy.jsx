@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonGroup, Glyphicon, Modal } from 'react-bootstrap';
+import { Button, ButtonGroup, Glyphicon, Tabs, Tab } from 'react-bootstrap';
 import Mopidy from 'mopidy';
 import Progress from './progress';
 import Volume from './volume';
@@ -109,40 +109,16 @@ class Mopy extends React.Component {
             <Button bsSize="large" href={'http://' + window.location.hostname + '/update/' + this.state.track.uri}><Glyphicon glyph="refresh" /></Button>
             <Button bsSize="large" href={'http://' + window.location.hostname + '/change/' + this.state.track.uri}><Glyphicon glyph="pencil" /></Button>
           </ButtonGroup>
-          <Button bsSize="large" onClick={ () => this.setState({ showSound: true })}><Glyphicon glyph="volume-up" /></Button>
-          <Button bsSize="large" onClick={ () => this.setState({ showTrackList: true })}><Glyphicon glyph="list" /></Button>
           <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
         </div>
-
-        <Modal show={this.state.showSound} onHide={() => this.setState({showSound: false})}>
-          <Modal.Header closeButton>
-            <Modal.Title>Volume</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
+        <Tabs>
+          <Tab eventKey={1} title={<Glyphicon glyph="music" />} ><ReactMarkdown source={this.state.track.lyrics} /></Tab>
+          <Tab eventKey={2} title={<Glyphicon glyph="list" />} ><TrackList tracks={this.state.tracks} mopidy={this.mopidy} /></Tab>
+          <Tab eventKey={3} title={<Glyphicon glyph="volume-up" />} >
             <Volume onVolume={this.onVolume.bind(this)} now={this.state.volume} name="général" onMute={this.onMute.bind(this)} muted={this.state.mute} />
             <Snap snapclients={this.state.snapclients} />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={() => this.setState({showSound: false})}>Close</Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal show={this.state.showTrackList} onHide={() => this.setState({showTrackList: false})}>
-          <Modal.Header closeButton>
-            <Modal.Title>Track list</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={() => this.setState({showTrackList: false})}>Close</Button>
-          </Modal.Footer>
-        </Modal>
-
-        <TrackList tracks={this.state.tracks} mopidy={this.mopidy} />
-
-        <div id="lyrics">
-          <ReactMarkdown source={this.state.track.lyrics} />
-        </div>
+          </Tab>
+        </Tabs>
 
         <WebSocket url={'ws://' + window.location.hostname} onMessage={this.handleData.bind(this)} />
       </div>
