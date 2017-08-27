@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from channels import Channel
 
+from .models import Playlist
 from .utils import telnet_snapcast
 
 
@@ -19,3 +20,11 @@ def snapcast(request):
     telnet_snapcast("Client.SetVolume", loads(request.body))
     Channel('snapcast').send({})
     return JsonResponse({})
+
+
+@csrf_exempt
+def playlists(request):
+    if request.method == 'POST':
+        req = loads(request.body)
+        Playlist.objects.filter(uri=req['uri']).update(active=req['active'])
+    return JsonResponse({'playlists': [pl.json() for pl in Playlist.objects.all()]})

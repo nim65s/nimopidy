@@ -94,7 +94,6 @@ class Mopy extends React.Component {
     this.mopidy.close();
     this.mopidy.off();
     this.mopidy = null;
-    clearInterval(this.timerIDtp);
   }
 
   controlHandlers(command) { if (this.state.connected) { this.mopidy.playback[command](); }}

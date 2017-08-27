@@ -29,7 +29,7 @@ class Album(NamedModel):
     cover = models.ImageField(upload_to='covers/', blank=True, null=True)
 
     def get_cover(self):
-        cover_url = mopidy_api('core.library.get_images', uris=[self.uri]).json()[self.uri][1]['uri']
+        cover_url = mopidy_api('core.library.get_images', uris=[self.uri])[self.uri][1]['uri']
 
         fp = BytesIO()
         fp.write(requests.get(cover_url).content)
@@ -55,8 +55,9 @@ class Track(NamedModel):
 
     def json(self):
         return {
-            'name': self.name, 'album': self.album.name, 'lyrics': self.lyrics, 'uri': self.uri, 'length': self.length,
-            'artists': ', '.join(artist.name for artist in self.artists.all()), 'cover': self.album.cover.url or '',
+            'name': self.name, 'album': self.album.name or '', 'lyrics': self.lyrics, 'uri': self.uri,
+            'length': self.length, 'artists': ', '.join(artist.name for artist in self.artists.all()),
+            'cover': self.album.cover.url or '',
         }
 
 
@@ -67,3 +68,6 @@ class Playlist(NamedModel):
     def update(cls):
         for playlist in mopidy_api('core.playlists.get_playlists', include_tracks=False):
             Playlist.objects.get_or_create(uri=playlist['uri'], defaults={'name': playlist['name']})
+
+    def json(self):
+        return {'name': self.name, 'uri': self.uri, 'active': self.active}

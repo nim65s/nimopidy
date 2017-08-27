@@ -2,12 +2,18 @@ import React from 'react';
 import { ButtonGroup, Glyphicon, Table, Button } from 'react-bootstrap';
 
 class PlayList extends React.Component {
+  activate() {
+    fetch('/playlists', {method: 'POST', body: JSON.stringify({
+      'uri': this.props.playlist.uri, 'active': !this.props.playlist.active})})
+      .then(this.props.updatePlaylists);
+  }
+
   render() {
     return (
       <tr>
-        <td><Button><Glyphicon glyph="check" /></Button></td>
-        <td>{this.props.name}</td>
-        <td>{this.props.uri}</td>
+        <td><Button onClick={this.activate.bind(this)}><Glyphicon glyph={this.props.playlist.active ? "check" : "unchecked"} /></Button></td>
+        <td>{this.props.playlist.name}</td>
+        <td>{this.props.playlist.uri}</td>
       </tr>
     );
   }
@@ -20,18 +26,19 @@ class PlayLists extends React.Component {
       playlists: [],
     }
     this.updatePlaylists = this.updatePlaylists.bind(this)
-    setTimeout(this.updatePlaylists, 1000);
+    this.updatePlaylists();
+    setInterval(this.updatePlaylists, 300000);
   }
 
   updatePlaylists() {
-    this.props.mopidy.playlists.getPlaylists({include_tracks: false}).done(playlists => this.setState({playlists: playlists}));
+    fetch('/playlists').then(r => r.json()).then(data => this.setState({playlists: data.playlists}));
   }
 
   render() {
     if (this.state.playlists) {
       var playlists = [];
       for (var i = 0; i < this.state.playlists.length; i++) {
-        playlists.push(<PlayList name={this.state.playlists[i].name} uri={this.state.playlists[i].uri} mopidy={this.props.mopidy} />);
+        playlists.push(<PlayList playlist={this.state.playlists[i]} updatePlaylists={this.updatePlaylists} />);
       }
       return (
         <Table striped condensed hover>
