@@ -1,9 +1,10 @@
 from json import dumps
+from random import choice
 
 from channels import Channel, Group
 
-from .models import Album, Artist, Track
-from .utils import telnet_snapcast
+from .models import Album, Artist, Playlist, Track
+from .utils import mopidy_api, telnet_snapcast
 
 
 def ws_connect(message):
@@ -44,12 +45,17 @@ def mopidy(message):
         return track_inst
 
     if 'status_report' in message.content:
-        track_inst = process_track(message.content['status_report']['current_track'])
-        Group('clients').send({'text': dumps({
-            'track': track_inst.json(),
-            'time_position': message.content['status_report']['time_position'],
-            'state': message.content['status_report']['state'],
-        })})
+        if message.content['status_report']['current_track']:
+            track_inst = process_track(message.content['status_report']['current_track'])
+            Group('clients').send({'text': dumps({
+                'track': track_inst.json(),
+                'time_position': message.content['status_report']['time_position'],
+                'state': message.content['status_report']['state'],
+            })})
+        else:
+            tracklist('plop')
+            mopidy_api('core.playback.play')
+            mopidy_api('core.tracklist.set_consume', value=True)
     elif 'playback_state_changed' in message.content:
         Group('clients').send({'text': dumps({
             'state': message.content['playback_state_changed']['new_state'],
@@ -66,6 +72,7 @@ def mopidy(message):
             'track': track_inst.json(),
             'time_position': message.content['track_playback_ended']['time_position'],
         })})
+        Channel('tracklist').send({})
     elif 'track_playback_paused' in message.content:
         track_inst = process_track(message.content['track_playback_paused']['tl_track']['track'])
         Group('clients').send({'text': dumps({
@@ -82,7 +89,9 @@ def mopidy(message):
         Group('clients').send({'text': dumps({
             'time_position': message.content['seeked']['time_position'],
         })})
-    elif any(event in message.content for event in ['tracklist_changed', 'options_changed']):
+    elif 'tracklist_changed' in message.content:
+        tracklist('plop')
+    elif 'options_changed' in message.content:
         pass
     else:
         print(message.content)
@@ -94,3 +103,10 @@ def snapcast(message):
     Group('clients').send({'text': dumps({
         'snapclients': clients,
     })})
+
+
+def tracklist(message):
+    if mopidy_api('core.tracklist.get_length') < 10:
+        playlist = Playlist.objects.filter(active=True).order_by('?').first()
+        tracks = mopidy_api('core.playlists.get_items', uri=playlist.uri)
+        mopidy_api('core.tracklist.add', uri=choice(tracks)['uri'])

@@ -66,6 +66,7 @@ class Playlist(NamedModel):
 
     @classmethod
     def update(cls):
+        # TODO as_list ?
         for playlist in mopidy_api('core.playlists.get_playlists', include_tracks=False):
             Playlist.objects.get_or_create(uri=playlist['uri'], defaults={'name': playlist['name']})
 
