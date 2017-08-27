@@ -19,10 +19,10 @@ class Track extends React.Component {
         <td>{this.props.track.track.album ? this.props.track.track.album.name : ''}</td>
         <td>{length}</td>
         <td><ButtonGroup>
-          <Button bsSize="xs" onClick={this.first.bind(this)} disabled={this.props.n < 2} ><Glyphicon glyph="chevron-up" /></Button>
-          <Button bsSize="xs" onClick={this.up.bind(this)} disabled={this.props.n < 2} ><Glyphicon glyph="menu-up" /></Button>
-          <Button bsSize="xs" onClick={this.down.bind(this)} disabled={this.props.n < 1} ><Glyphicon glyph="menu-down" /></Button>
-          <Button bsSize="xs" onClick={this.del.bind(this)} disabled={this.props.n < 1} ><Glyphicon glyph="remove" /></Button>
+          <Button bsSize="sm" onClick={this.first.bind(this)} disabled={this.props.n < 2} ><Glyphicon glyph="chevron-up" /></Button>
+          <Button bsSize="sm" onClick={this.up.bind(this)} disabled={this.props.n < 2} ><Glyphicon glyph="menu-up" /></Button>
+          <Button bsSize="sm" onClick={this.down.bind(this)} disabled={this.props.n < 1} ><Glyphicon glyph="menu-down" /></Button>
+          <Button bsSize="sm" onClick={this.del.bind(this)} disabled={this.props.n < 1} ><Glyphicon glyph="remove" /></Button>
         </ButtonGroup></td>
       </tr>
     );

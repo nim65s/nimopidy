@@ -2,6 +2,10 @@ import React from 'react';
 import { Glyphicon, Table, Button, FormControl } from 'react-bootstrap';
 
 class Result extends React.Component {
+  add() {
+    this.props.mopidy.tracklist.add({uri: this.props.result.uri});
+  }
+
   render () {
     var length = new Date(this.props.result.length).toISOString().substr(14,5);
     return (
@@ -10,7 +14,7 @@ class Result extends React.Component {
         <td>{this.props.result.artists ? this.props.result.artists[0].name : ''}</td>
         <td>{this.props.result.album ? this.props.result.album.name : ''}</td>
         <td>{length}</td>
-        <td><Button><Glyphicon glyph="plus" /></Button></td>
+        <td><Button bsSize="sm" onClick={this.add.bind(this)}><Glyphicon glyph="plus" /></Button></td>
       </tr>
     );
   }
@@ -27,7 +31,7 @@ class Search extends React.Component {
   handleChange(e) {
     if (e.target.value.length > 4) {
       this.props.mopidy.library.search({any: [e.target.value], uris: ['spotify:']})
-        .done(results => this.setState({results: results[0].tracks.}));
+        .done(results => this.setState({results: results[0].tracks}));
     }
   }
 
@@ -35,7 +39,7 @@ class Search extends React.Component {
     var results = [];
     if (this.state.results) {
       for (var i = 0; i < this.state.results.length; i++) {
-        results.push(<Result result={this.state.results[i]} />);
+        results.push(<Result result={this.state.results[i]} mopidy={this.props.mopidy} />);
       }
     }
     return (
