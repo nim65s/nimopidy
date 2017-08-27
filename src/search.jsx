@@ -2,8 +2,16 @@ import React from 'react';
 import { Glyphicon, Table, Button, FormControl } from 'react-bootstrap';
 
 class Result extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      added: false,
+    }
+  }
+
   add() {
     this.props.mopidy.tracklist.add({uri: this.props.result.uri});
+    this.setState({ added: true });
   }
 
   render () {
@@ -14,7 +22,11 @@ class Result extends React.Component {
         <td>{this.props.result.artists ? this.props.result.artists[0].name : ''}</td>
         <td>{this.props.result.album ? this.props.result.album.name : ''}</td>
         <td>{length}</td>
-        <td><Button bsSize="sm" onClick={this.add.bind(this)}><Glyphicon glyph="plus" /></Button></td>
+        <td>
+          <Button bsSize="sm" bsStyle={this.state.added ? "success" : ""} onClick={this.add.bind(this)} disabled={this.state.added}>
+            <Glyphicon glyph={this.state.added ? "ok" : "plus"} />
+          </Button>
+        </td>
       </tr>
     );
   }
