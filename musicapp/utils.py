@@ -39,3 +39,10 @@ def telnet_snapcast(method, params=None, server='localhost', port=1705):
             data["params"] = params
         tn.write(dumps(data).encode() + b'\r\n')
         return loads(tn.read_until(b'\r\n').decode())
+
+
+def mopidy_api(method, **kwargs):
+    data = {"jsonrpc": "2.0", "id": 1, "method": method}
+    if kwargs:
+        data['params'] = kwargs
+    return requests.post("http://localhost:6680/mopidy/rpc", data=dumps(data)).json()['result']

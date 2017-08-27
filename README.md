@@ -17,8 +17,8 @@ npm run build
 - django-knocker (desktop notifications)
 - playlist management
 - responsive
-
 - update / modify: lyrics, cover & infos
+- shuffle tracklist
 
 
 ## Find stuff in Mopidy API

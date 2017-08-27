@@ -6,6 +6,7 @@ import Volume from './volume';
 import Snap from './snap';
 import TrackList from './tracklist';
 import Search from './search';
+import PlayLists from './playlists';
 import ReactMarkdown from 'react-markdown';
 import WebSocket from 'react-websocket';
 
@@ -112,11 +113,12 @@ class Mopy extends React.Component {
           </ButtonGroup>
           <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
         </div>
-        <Tabs defaultActiveKey={3} >
+        <Tabs defaultActiveKey={4} >
           <Tab eventKey={1} title={<Glyphicon glyph="music" />} ><ReactMarkdown source={this.state.track.lyrics} /></Tab>
           <Tab eventKey={2} title={<Glyphicon glyph="list" />} ><TrackList tracks={this.state.tracks} mopidy={this.mopidy} /></Tab>
           <Tab eventKey={3} title={<Glyphicon glyph="search" />} ><Search mopidy={this.mopidy} /></Tab>
-          <Tab eventKey={4} title={<Glyphicon glyph="volume-up" />} >
+          <Tab eventKey={4} title={<Glyphicon glyph="th-list" />} ><PlayLists mopidy={this.mopidy} /></Tab>
+          <Tab eventKey={5} title={<Glyphicon glyph="volume-up" />} >
             <Volume onVolume={this.onVolume.bind(this)} now={this.state.volume} name="général" onMute={this.onMute.bind(this)} muted={this.state.mute} />
             <Snap snapclients={this.state.snapclients} />
           </Tab>
