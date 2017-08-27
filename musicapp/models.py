@@ -55,9 +55,9 @@ class Track(NamedModel):
 
     def json(self):
         return {
-            'name': self.name, 'album': self.album.name or '', 'lyrics': self.lyrics, 'uri': self.uri,
+            'name': self.name, 'album': self.album.name if self.album else '', 'lyrics': self.lyrics, 'uri': self.uri,
             'length': self.length, 'artists': ', '.join(artist.name for artist in self.artists.all()),
-            'cover': self.album.cover.url or '',
+            'cover': self.album.cover.url if self.album and self.album.cover else '',
         }
 
 

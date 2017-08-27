@@ -11,7 +11,7 @@ class Result extends React.Component {
 
   add() {
     this.props.mopidy.tracklist.add({uri: this.props.result.uri});
-    this.setState({ added: true });
+    this.setState({ added: this.props.result.uri });
   }
 
   render () {
@@ -24,8 +24,9 @@ class Result extends React.Component {
         <td>{this.props.uri.split(':')[0]}</td>
         <td>{length}</td>
         <td>
-          <Button bsSize="sm" bsStyle={this.state.added ? "success" : ""} onClick={this.add.bind(this)} disabled={this.state.added}>
-            <Glyphicon glyph={this.state.added ? "ok" : "plus"} />
+          <Button bsSize="sm" bsStyle={this.state.added == this.props.result.uri ? "success" : ""}
+            onClick={this.add.bind(this)} disabled={this.state.adde == this.props.result.uri }>
+            <Glyphicon glyph={this.state.added == this.props.result.uri ? "ok" : "plus"} />
           </Button>
         </td>
       </tr>

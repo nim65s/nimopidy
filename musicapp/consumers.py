@@ -20,8 +20,10 @@ def ws_disconnect(message):
 def mopidy(message):
     def process_track(track_data):
         def get_or_create(model, data):
-            keys = ['name', 'uri', 'date', 'length', 'disc_no', 'track_no']
-            return model.objects.get_or_create(**{key: data[key] for key in keys if key in data})
+            keys = ['name', 'date', 'length', 'disc_no', 'track_no']
+            if 'uri' not in data and data['name'] == 'YouTube':
+                data['uri'] = 'youtube:dumb_album'
+            return model.objects.get_or_create(uri=data['uri'], defaults={k: data[k] for k in keys if k in data})
 
         track_inst, created = get_or_create(Track, track_data)
         if created:
