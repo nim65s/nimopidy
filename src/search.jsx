@@ -1,5 +1,6 @@
 import React from 'react';
 import { Glyphicon, Table, Button, FormControl } from 'react-bootstrap';
+import './search.css';
 
 class Result extends React.Component {
   constructor(props) {
@@ -38,15 +39,23 @@ class Search extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      any: '',
       results: [],
+      searching: [],
     }
   }
 
-  handleChange(e) {
-    if (e.target.value.length > 4) {
-      this.props.mopidy.library.search({any: [e.target.value]})
-        .done(results => this.setState({results: results}));
+  handleChange(event) {
+    this.setState({any: event.target.value});
+  }
+
+  handleSubmit(event) {
+    if (this.state.any.length > 4) {
+      this.setState({searching: <Glyphicon glyph="refresh" className="gly-spin" />});
+      this.props.mopidy.library.search({any: [this.state.any]})
+        .done(results => this.setState({results: results, searching: []}));
     }
+    event.preventDefault();
   }
 
   render() {
@@ -62,9 +71,10 @@ class Search extends React.Component {
     }
     return (
       <div>
-        <form>
-          <FormControl type="text" onChange={this.handleChange.bind(this)} />
+        <form onSubmit={this.handleSubmit.bind(this)}>
+          <FormControl type="text" placeholder="Any Query" value={this.state.value} onChange={this.handleChange.bind(this)} />
         </form>
+        {this.state.searching}
         <Table striped condensed hover>
           <thead>
             <tr>
