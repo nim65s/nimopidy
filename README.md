@@ -19,6 +19,22 @@ npm run build
 - responsive
 - update / modify: lyrics, cover & infos
 - shuffle tracklist
+- lyrics versionning (django-reversion)
+- search in selected playlists
+
+## Later
+
+- Timing / kara / performous
+- votes
+- whitelist / blacklist / modération
+- playlists tools:
+    - add a song to a playlist
+    - diff two playlists
+    - remove duplicates
+- find similar songs
+    - same artist / name
+    - covers
+    - live
 
 
 ## Find stuff in Mopidy API
