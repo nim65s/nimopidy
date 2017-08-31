@@ -1,5 +1,9 @@
 # NiMoPiDy
 
+## Chat about this project
+
+[#nimopidy:matrix.org](https://riot.im/app/#/room/#nimopidy:matrix.org)
+
 ## Install
 
 setup virtualenv and redis, then:
