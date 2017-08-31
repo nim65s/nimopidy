@@ -28,10 +28,10 @@ npm run build
 - shuffle tracklist
 - lyrics versionning (django-reversion)
 - search in selected playlists
-- Build android app http://jkaufman.io/react-web-native-codesharing/
 
 ## Later
 
+- Build android app http://jkaufman.io/react-web-native-codesharing/
 - django-knocker (desktop notifications)
 - Timing / kara / performous
 - votes
