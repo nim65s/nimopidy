@@ -30,12 +30,15 @@ class Album(NamedModel):
     cover = models.ImageField(upload_to='covers/', blank=True, null=True)
 
     def get_cover(self):
-        cover_url = mopidy_api('core.library.get_images', uris=[self.uri])[self.uri][1]['uri']
+        try:
+            cover_url = mopidy_api('core.library.get_images', uris=[self.uri])[self.uri][1]['uri']
 
-        fp = BytesIO()
-        fp.write(requests.get(cover_url).content)
-        self.cover.save(self.uri, files.File(fp))
-        self.save()
+            fp = BytesIO()
+            fp.write(requests.get(cover_url).content)
+            self.cover.save(self.uri, files.File(fp))
+            self.save()
+        except:
+            print(f"Can't get cover for {self}")
 
 
 class Track(NamedModel):
