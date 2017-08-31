@@ -5,4 +5,4 @@ from musicapp.models import Playlist
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        Playlist.update()
+        Playlist.create_from_mopidy()

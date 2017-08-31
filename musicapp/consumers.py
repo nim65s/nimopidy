@@ -4,7 +4,7 @@ from random import choice
 
 from channels import Channel, Group
 
-from .models import Album, Artist, Playlist, Track
+from .models import Playlist, Track
 from .utils import mopidy_api, telnet_snapcast
 
 
@@ -19,37 +19,9 @@ def ws_disconnect(message):
 
 
 def mopidy(message):
-    def process_track(track_data):
-        def get_or_create(model, data):
-            keys = ['name', 'date', 'length', 'disc_no', 'track_no']
-            if 'uri' not in data and data['name'] == 'YouTube':
-                data['uri'] = 'youtube:dumb_album'
-            return model.objects.get_or_create(uri=data['uri'], defaults={k: data[k] for k in keys if k in data})
-
-        track_inst, created = get_or_create(Track, track_data)
-        if created:
-            if 'artists' in track_data:
-                for artist_data in track_data['artists']:
-                    artist_inst, _ = get_or_create(Artist, artist_data)
-                    track_inst.artists.add(artist_inst)
-            if 'album' in track_data:
-                album_data = track_data['album']
-                album_inst, created = get_or_create(Album, album_data)
-                if created:
-                    if 'artists' in album_data:
-                        for artist_data in album_data['artists']:
-                            artist_inst, _ = get_or_create(Artist, artist_data)
-                            album_inst.artists.add(artist_inst)
-                        album_inst.get_cover()
-                        album_inst.save()
-                track_inst.album = album_inst
-            track_inst.save()
-            track_inst.get_lyrics()
-        return track_inst
-
     if 'status_report' in message.content:
         if message.content['status_report']['current_track']:
-            track_inst = process_track(message.content['status_report']['current_track'])
+            track_inst = Track.get_or_create_from_mopidy(message.content['status_report']['current_track'])
             Group('clients').send({'text': dumps({
                 'track': track_inst.json(),
                 'time_position': message.content['status_report']['time_position'],
@@ -64,13 +36,13 @@ def mopidy(message):
             'state': message.content['playback_state_changed']['new_state'],
         })})
     elif 'track_playback_started' in message.content:
-        track_inst = process_track(message.content['track_playback_started']['tl_track']['track'])
+        track_inst = Track.get_or_create_from_mopidy(message.content['track_playback_started']['tl_track']['track'])
         Group('clients').send({'text': dumps({
             'track': track_inst.json(),
             'time_position': 0,
         })})
     elif 'track_playback_ended' in message.content:
-        track_inst = process_track(message.content['track_playback_ended']['tl_track']['track'])
+        track_inst = Track.get_or_create_from_mopidy(message.content['track_playback_ended']['tl_track']['track'])
         track_inst.playcount += 1
         track_inst.last_play = datetime.now()
         track_inst.save()
@@ -80,13 +52,13 @@ def mopidy(message):
         })})
         Channel('tracklist').send({})
     elif 'track_playback_paused' in message.content:
-        track_inst = process_track(message.content['track_playback_paused']['tl_track']['track'])
+        track_inst = Track.get_or_create_from_mopidy(message.content['track_playback_paused']['tl_track']['track'])
         Group('clients').send({'text': dumps({
             'track': track_inst.json(),
             'time_position': message.content['track_playback_paused']['time_position'],
         })})
     elif 'track_playback_resumed' in message.content:
-        track_inst = process_track(message.content['track_playback_resumed']['tl_track']['track'])
+        track_inst = Track.get_or_create_from_mopidy(message.content['track_playback_resumed']['tl_track']['track'])
         Group('clients').send({'text': dumps({
             'track': track_inst.json(),
             'time_position': message.content['track_playback_resumed']['time_position'],
@@ -114,5 +86,6 @@ def snapcast(message):
 def tracklist(message):
     if mopidy_api('core.tracklist.get_length') < 10:
         playlist = Playlist.objects.filter(active=True).order_by('?').first()
-        tracks = mopidy_api('core.playlists.get_items', uri=playlist.uri)
-        mopidy_api('core.tracklist.add', uri=choice(tracks)['uri'])
+        track = choice(mopidy_api('core.playlists.get_items', uri=playlist.uri))
+        print(f'add {track["name"]} from {playlist}')
+        mopidy_api('core.tracklist.add', uri=track['uri'])

@@ -91,15 +91,15 @@ class Mopy extends React.Component {
           <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
         </div>
         <Tabs defaultActiveKey={3} >
-          <Tab eventKey={1} title={<Glyphicon glyph="pencil" />} >TODO</Tab>
-          <Tab eventKey={2} title={<Glyphicon glyph="music" />} ><ReactMarkdown source={this.state.track.lyrics} className="lyrics" /></Tab>
-          <Tab eventKey={3} title={<Glyphicon glyph="list" />} ><TrackList tracks={this.state.tracks} mopidy={this.mopidy} /></Tab>
-          <Tab eventKey={4} title={<Glyphicon glyph="search" />} ><Search mopidy={this.mopidy} /></Tab>
-          <Tab eventKey={5} title={<Glyphicon glyph="th-list" />} ><PlayLists mopidy={this.mopidy} /></Tab>
-          <Tab eventKey={6} title={<Glyphicon glyph="volume-up" />} >
+          <Tab eventKey={1} title={<Glyphicon glyph="music" />} ><ReactMarkdown source={this.state.track.lyrics} className="lyrics" /></Tab>
+          <Tab eventKey={2} title={<Glyphicon glyph="list" />} ><TrackList tracks={this.state.tracks} mopidy={this.mopidy} /></Tab>
+          <Tab eventKey={3} title={<Glyphicon glyph="search" />} ><Search mopidy={this.mopidy} /></Tab>
+          <Tab eventKey={4} title={<Glyphicon glyph="th-list" />} ><PlayLists mopidy={this.mopidy} /></Tab>
+          <Tab eventKey={5} title={<Glyphicon glyph="volume-up" />} >
             <Volume onVolume={this.onVolume.bind(this)} now={this.state.volume} name="général" onMute={this.onMute.bind(this)} muted={this.state.mute} />
             <Snap snapclients={this.state.snapclients} />
           </Tab>
+          <Tab eventKey={6} title={<Glyphicon glyph="pencil" />} >TODO</Tab>
         </Tabs>
 
         <WebSocket url={'ws://' + window.location.hostname} onMessage={this.handleData.bind(this)} />

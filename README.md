@@ -13,6 +13,8 @@ pip install -U -r requirements.txt
 npm install
 npm run build
 ./manage.py migrate
+./manage.py playlists  # optional, populates database from mopidy, might be long the first time
+./manage.py createsuperuser # optional, if you want to access to the admin interface
 ./manage.py runserver
 ```
 

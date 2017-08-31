@@ -43,7 +43,7 @@ class Track(NamedModel):
     date = models.PositiveSmallIntegerField(blank=True, null=True)
     album = models.ForeignKey(Album, blank=True, null=True, related_name='songs')
     lyrics = models.TextField(null=True, default=None)
-    length = models.PositiveIntegerField()
+    length = models.PositiveIntegerField(null=True)
     disc_no = models.PositiveSmallIntegerField(default=0)
     track_no = models.PositiveSmallIntegerField(default=0)
     playcount = models.PositiveIntegerField(default=0)
@@ -64,14 +64,70 @@ class Track(NamedModel):
             'last_play': naturaltime(self.last_play),
         }
 
+    def update_from_mopidy(self):
+        self.get_or_create_from_mopidy(mopidy_api('core.library.lookup', uri=self.uri)[0], force_update=True)
+
+    @classmethod
+    def get_or_create_from_mopidy(cls, track_data=None, force_update=False):
+        def get_or_create(model, data):
+            keys = ['name', 'date', 'length', 'disc_no', 'track_no']
+            if 'uri' not in data and data['name'] == 'YouTube':
+                data['uri'] = 'youtube:dumb_album'
+            return model.objects.get_or_create(uri=data['uri'], defaults={k: data[k] for k in keys if k in data})
+
+        track_inst, created = get_or_create(Track, track_data)
+        if force_update or created:
+            if 'artists' in track_data:
+                for artist_data in track_data['artists']:
+                    artist_inst, _ = get_or_create(Artist, artist_data)
+                    track_inst.artists.add(artist_inst)
+            if 'album' in track_data:
+                album_data = track_data['album']
+                album_inst, created = get_or_create(Album, album_data)
+                if created:
+                    if 'artists' in album_data:
+                        for artist_data in album_data['artists']:
+                            artist_inst, _ = get_or_create(Artist, artist_data)
+                            album_inst.artists.add(artist_inst)
+                        album_inst.get_cover()
+                        album_inst.save()
+                track_inst.album = album_inst
+            track_inst.save()
+            track_inst.get_lyrics()
+        return track_inst
+
 
 class Playlist(NamedModel):
     active = models.BooleanField(default=False)
 
-    @classmethod
-    def update(cls):
-        for playlist in mopidy_api('core.playlists.as_list'):
-            Playlist.objects.get_or_create(uri=playlist['uri'], defaults={'name': playlist['name'], 'active': True})
-
     def json(self):
         return {'name': self.name, 'uri': self.uri, 'active': self.active}
+
+    def update_from_mopidy(self):
+        self.playlisttrack_set.all().delete()
+        for i, track in enumerate(mopidy_api('core.playlists.get_items', uri=self.uri)):
+            track_inst, created = Track.objects.get_or_create(uri=track['uri'], defaults={'name': track['name']})
+            if created:
+                track_inst.update_from_mopidy()
+            PlaylistTrack(playlist=self, number=i, track=track_inst).save()
+
+    @classmethod
+    def create_from_mopidy(cls):
+        for playlist in mopidy_api('core.playlists.as_list'):
+            defaults = {'name': playlist['name'], 'active': True}
+            playlist_inst, created = Playlist.objects.get_or_create(uri=playlist['uri'], defaults=defaults)
+            if created:
+                playlist_inst.update_from_mopidy()
+
+
+class PlaylistTrack(models.Model):
+    playlist = models.ForeignKey(Playlist)
+    number = models.IntegerField()
+    track = models.ForeignKey(Track)
+
+    def __str__(self):
+        return f'{self.playlist} - {self.number} - {self.track}'
+
+    class Meta:
+        unique_together = ('playlist', 'number')
+        ordering = ('playlist', 'number')
