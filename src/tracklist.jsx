@@ -14,16 +14,16 @@ class Track extends React.Component {
     var length = new Date(this.props.track.track.length).toISOString().substr(14,5);
     return (
       <tr>
-        <td>{this.props.track.track.name}</td>
-        <td>{this.props.track.track.artists ? this.props.track.track.artists[0].name : ''}</td>
-        <td>{this.props.track.track.album ? this.props.track.track.album.name : ''}</td>
-        <td>{length}</td>
         <td><ButtonGroup>
           <Button bsSize="sm" onClick={this.first.bind(this)} disabled={this.props.n < 2} ><Glyphicon glyph="chevron-up" /></Button>
           <Button bsSize="sm" onClick={this.up.bind(this)} disabled={this.props.n < 2} ><Glyphicon glyph="menu-up" /></Button>
           <Button bsSize="sm" onClick={this.down.bind(this)} disabled={this.props.n < 1} ><Glyphicon glyph="menu-down" /></Button>
           <Button bsSize="sm" onClick={this.del.bind(this)} disabled={this.props.n < 1} ><Glyphicon glyph="remove" /></Button>
         </ButtonGroup></td>
+        <td>{this.props.track.track.name}</td>
+        <td>{this.props.track.track.artists ? this.props.track.track.artists[0].name : ''}</td>
+        <td>{this.props.track.track.album ? this.props.track.track.album.name : ''}</td>
+        <td>{length}</td>
       </tr>
     );
     } else { return <tr />; }
@@ -41,11 +41,11 @@ class TrackList extends React.Component {
       <Table striped condensed hover>
         <thead>
           <tr>
+            <th></th>
             <th>Title</th>
             <th>Artist</th>
             <th>Album</th>
             <th>Time</th>
-            <th></th>
           </tr>
         </thead>
         <tbody>

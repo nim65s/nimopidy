@@ -82,7 +82,7 @@ class Mopy extends React.Component {
     return (
       <div>
         <div className="clearfix">
-          {this.state.track.cover ? <img src={this.state.track.cover} alt={this.state.track.album} className="pull-left" /> : ''}
+          {this.state.track.cover ? <img src={this.state.track.cover} alt={this.state.track.album} width="300" height="300" className="pull-left hidden-xs" /> : ''}
           <h1>{this.state.track.artists}</h1>
           <h2>{this.state.track.name}</h2>
           <h3>{this.state.track.album}</h3>

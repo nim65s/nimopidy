@@ -21,6 +21,9 @@ npm run build
 - shuffle tracklist
 - lyrics versionning (django-reversion)
 - search in selected playlists
+- play count
+- last play date
+- Build android app http://jkaufman.io/react-web-native-codesharing/
 
 ## Later
 

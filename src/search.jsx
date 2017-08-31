@@ -19,17 +19,17 @@ class Result extends React.Component {
     var length = new Date(this.props.result.length).toISOString().substr(14,5);
     return (
       <tr>
-        <td>{this.props.result.name}</td>
-        <td>{this.props.result.artists ? this.props.result.artists[0].name : ''}</td>
-        <td>{this.props.result.album ? this.props.result.album.name : ''}</td>
-        <td>{this.props.uri.split(':')[0]}</td>
-        <td>{length}</td>
         <td>
           <Button bsSize="sm" bsStyle={this.state.added === this.props.result.uri ? "success" : ""}
             onClick={this.add.bind(this)} disabled={this.state.added === this.props.result.uri }>
             <Glyphicon glyph={this.state.added === this.props.result.uri ? "ok" : "plus"} />
           </Button>
         </td>
+        <td>{this.props.result.name}</td>
+        <td>{this.props.result.artists ? this.props.result.artists[0].name : ''}</td>
+        <td>{this.props.result.album ? this.props.result.album.name : ''}</td>
+        <td>{this.props.uri.split(':')[0]}</td>
+        <td>{length}</td>
       </tr>
     );
   }
@@ -99,12 +99,12 @@ class Search extends React.Component {
         <Table striped condensed hover>
           <thead>
             <tr>
+              <th></th>
               <th>Title</th>
               <th>Artist</th>
               <th>Album</th>
               <th>Source</th>
               <th>Time</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
