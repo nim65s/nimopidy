@@ -20,9 +20,11 @@ npm run build
 
 ## TODO
 
-- playlist management
-- responsive
 - update / modify: lyrics, cover & infos
+- playlist management
+    - add a song to a playlist
+    - diff two playlists
+    - remove duplicates
 - shuffle tracklist
 - lyrics versionning (django-reversion)
 - search in selected playlists
@@ -31,14 +33,9 @@ npm run build
 ## Later
 
 - django-knocker (desktop notifications)
-- don't play twice the same (similar) song a day (can apply only to randomly added ones or not)
 - Timing / kara / performous
 - votes
 - whitelist / blacklist / modération
-- playlists tools:
-    - add a song to a playlist
-    - diff two playlists
-    - remove duplicates
 - find similar songs
     - same artist / name
     - covers

@@ -65,10 +65,13 @@ class Track(NamedModel):
         }
 
     def update_from_mopidy(self):
-        self.get_or_create_from_mopidy(mopidy_api('core.library.lookup', uri=self.uri)[0], force_update=True)
+        self.get_or_create_from_mopidy(uri=self.uri, force_update=True)
 
     @classmethod
-    def get_or_create_from_mopidy(cls, track_data=None, force_update=False):
+    def get_or_create_from_mopidy(cls, track_data=None, uri='', force_update=False):
+        if track_data is None:
+            track_data = mopidy_api('core.library.lookup', uri=uri)[0]
+
         def get_or_create(model, data):
             keys = ['name', 'date', 'length', 'disc_no', 'track_no']
             if 'uri' not in data and data['name'] == 'YouTube':

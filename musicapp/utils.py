@@ -1,4 +1,6 @@
+from datetime import datetime, timedelta
 from json import dumps, loads
+from random import choice
 from telnetlib import Telnet
 
 import html2text
@@ -46,3 +48,19 @@ def mopidy_api(method, **kwargs):
     if kwargs:
         data['params'] = kwargs
     return requests.post("http://localhost:6680/mopidy/rpc", data=dumps(data)).json()['result']
+
+
+def add_random():
+    from .models import Track, Playlist  # noqa
+
+    if mopidy_api('core.tracklist.get_length') < 10:
+        for _ in range(10):
+            playlist = Playlist.objects.filter(active=True).order_by('?').first()
+            track = choice(mopidy_api('core.playlists.get_items', uri=playlist.uri))
+            track_inst = Track.get_or_create_from_mopidy(uri=track['uri'])
+            if not track_inst.last_play or datetime.now() - track_inst.last_play > timedelta(hours=1):
+                print(f'Randomly added {track["name"]} from {playlist}')
+                mopidy_api('core.tracklist.add', uri=track['uri'])
+                break
+        else:
+            print("Can't find a random track to add")
