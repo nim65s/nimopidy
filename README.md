@@ -29,7 +29,7 @@ npm run build
 ## Later
 
 - django-knocker (desktop notifications)
-- don't play twice the same (similar) song a day (can apply
+- don't play twice the same (similar) song a day (can apply only to randomly added ones or not)
 - Timing / kara / performous
 - votes
 - whitelist / blacklist / modération

@@ -71,7 +71,7 @@ class Playlist(NamedModel):
     @classmethod
     def update(cls):
         for playlist in mopidy_api('core.playlists.as_list'):
-            Playlist.objects.get_or_create(uri=playlist['uri'], defaults={'name': playlist['name']})
+            Playlist.objects.get_or_create(uri=playlist['uri'], defaults={'name': playlist['name'], 'active': True})
 
     def json(self):
         return {'name': self.name, 'uri': self.uri, 'active': self.active}
