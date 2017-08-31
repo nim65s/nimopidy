@@ -14,19 +14,18 @@ npm run build
 
 ## TODO
 
-- django-knocker (desktop notifications)
 - playlist management
 - responsive
 - update / modify: lyrics, cover & infos
 - shuffle tracklist
 - lyrics versionning (django-reversion)
 - search in selected playlists
-- play count
-- last play date
 - Build android app http://jkaufman.io/react-web-native-codesharing/
 
 ## Later
 
+- django-knocker (desktop notifications)
+- don't play twice the same (similar) song a day (can apply
 - Timing / kara / performous
 - votes
 - whitelist / blacklist / modération

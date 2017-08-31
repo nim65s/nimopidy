@@ -1,5 +1,6 @@
 from io import BytesIO
 
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core import files
 from django.db import models
 
@@ -45,6 +46,8 @@ class Track(NamedModel):
     length = models.PositiveIntegerField()
     disc_no = models.PositiveSmallIntegerField(default=0)
     track_no = models.PositiveSmallIntegerField(default=0)
+    playcount = models.PositiveIntegerField(default=0)
+    last_play = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         ordering = ['date', 'album__name', 'disc_no', 'track_no', 'name']
@@ -57,7 +60,8 @@ class Track(NamedModel):
         return {
             'name': self.name, 'album': self.album.name if self.album else '', 'lyrics': self.lyrics, 'uri': self.uri,
             'length': self.length, 'artists': ', '.join(artist.name for artist in self.artists.all()),
-            'cover': self.album.cover.url if self.album and self.album.cover else '',
+            'cover': self.album.cover.url if self.album and self.album.cover else '', 'playcount': self.playcount,
+            'last_play': naturaltime(self.last_play),
         }
 
 

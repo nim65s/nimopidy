@@ -1,3 +1,4 @@
+from datetime import datetime
 from json import dumps
 from random import choice
 
@@ -70,6 +71,9 @@ def mopidy(message):
         })})
     elif 'track_playback_ended' in message.content:
         track_inst = process_track(message.content['track_playback_ended']['tl_track']['track'])
+        track_inst.playcount += 1
+        track_inst.last_play = datetime.now()
+        track_inst.save()
         Group('clients').send({'text': dumps({
             'track': track_inst.json(),
             'time_position': message.content['track_playback_ended']['time_position'],
