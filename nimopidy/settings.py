@@ -10,18 +10,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
+from os import environ
 from os.path import abspath, dirname
-from pathlib import Path
 
 PROJECT = 'nimopidy'
 
 BASE_DIR = dirname(dirname(abspath(__file__)))
-CONF_DIR = Path("/etc/") / PROJECT
-ALLOWED_HOSTS = [PROJECT]
+ALLOWED_HOSTS = [PROJECT, 'localhost:8000', 'localhost']
 
-SECRET_KEY = (CONF_DIR / "secret_key").open().read().strip()
+SECRET_KEY = environ['DJANGO_SECRET_KEY']
 
-DEBUG = not (CONF_DIR / 'prod').is_file()
+DEBUG = environ.get('DJANGO_DEBUG', 'false').lower() == 'true'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -75,10 +74,10 @@ WSGI_APPLICATION = f'{PROJECT}.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': PROJECT,
-        'USER': PROJECT,
-        'PASSWORD': (CONF_DIR / 'db_password').open().read().strip(),
-        'HOST': 'localhost',
+        'USER': 'postgres',
+        'NAME': 'postgres',
+        'HOST': 'postgres',
+        'PASSWORD': environ['POSTGRES_PASSWORD']
     }
 }
 
@@ -104,9 +103,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = environ.get('LANGAGE_CODE', 'fr-FR')
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = environ.get('TIME_ZONE', 'Europe/Paris')
 
 USE_I18N = True
 
@@ -114,20 +113,16 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.10/howto/static-files/
-
 STATIC_URL = '/static/'
-STATIC_ROOT = '/srv/nimopidy/static'
-MEDIA_ROOT = '/srv/nimopidy/media'
+STATIC_ROOT = '/static/'
+MEDIA_ROOT = '/media/'
 MEDIA_URL = '/media/'
 
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'asgi_redis.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('localhost', 6379)],
+            'hosts': [('redis', 6379)],
         },
         'ROUTING': f'{PROJECT}.routing.channel_routing',
     },

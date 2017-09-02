@@ -1,0 +1,48 @@
+version: '3'
+
+volumes:
+  static:
+  media:
+
+services:
+  redis:
+    image: redis
+  postgres:
+    image: postgres
+  daphne:
+    build: .
+    expose:
+      - "8000"
+    depends_on:
+      - redis
+      - postgres
+    command: daphne -b 0.0.0.0 -p 8000 nimopidy.asgi:channel_layer
+    env_file:
+      - .env
+    volumes:
+      - "./nimopidy:/app/nimopidy"
+      - "./musicapp:/app/musicapp"
+  worker:
+    build: .
+    depends_on:
+      - redis
+      - postgres
+    command: bash -c "./manage.py collectstatic --noinput && ./manage.py migrate && ./manage.py runworker"
+    volumes:
+      - "static:/static"
+      - "media:/media"
+      - "./nimopidy:/app/nimopidy"
+      - "./musicapp:/app/musicapp"
+      - "./build:/app/build"
+    env_file:
+      - .env
+  nginx:
+    image: nginx
+    ports:
+      - "8000:8000"
+    volumes:
+      - "static:/static"
+      - "media:/media"
+      - "./conf/:/etc/nginx/conf.d"
+    links:
+      - daphne
