@@ -106,6 +106,9 @@ class Track(NamedModel):
 class Playlist(NamedModel):
     active = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ('name', )
+
     def json(self):
         return {'name': self.name, 'uri': self.uri, 'active': self.active}
 
@@ -122,8 +125,8 @@ class Playlist(NamedModel):
         for playlist in mopidy_api('core.playlists.as_list'):
             defaults = {'name': playlist['name'], 'active': True}
             playlist_inst, created = Playlist.objects.get_or_create(uri=playlist['uri'], defaults=defaults)
-            if created:
-                playlist_inst.update_from_mopidy()
+            print(f'Updating playlist {playlist_inst}')
+            playlist_inst.update_from_mopidy()
 
 
 class PlaylistTrack(models.Model):

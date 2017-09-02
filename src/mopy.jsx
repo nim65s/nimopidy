@@ -90,7 +90,7 @@ class Mopy extends React.Component {
           <Controls handlers={this.controlHandlers} status={this.state.connected} />
           <Progress onSeek={this.onSeek.bind(this)} max={this.state.track.length} now={this.state.now} label={this.state.nowstr} wheelCoef={100} active />
         </div>
-        <Tabs defaultActiveKey={3} >
+        <Tabs defaultActiveKey={2} >
           <Tab eventKey={1} title={<Glyphicon glyph="music" />} ><ReactMarkdown source={this.state.track.lyrics} className="lyrics" /></Tab>
           <Tab eventKey={2} title={<Glyphicon glyph="list" />} ><TrackList tracks={this.state.tracks} mopidy={this.mopidy} /></Tab>
           <Tab eventKey={3} title={<Glyphicon glyph="search" />} ><Search mopidy={this.mopidy} /></Tab>

@@ -1,7 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from json import dumps, loads
 from random import choice
 from telnetlib import Telnet
+
+from django.utils import timezone
 
 import html2text
 import requests
@@ -34,7 +36,7 @@ def get_lyrics(artist, song):
     return html2text.html2text(str(lyrics)[1:-1]) if lyrics else req.url
 
 
-def telnet_snapcast(method, params=None, server='localhost', port=1705):
+def telnet_snapcast(method, params=None, server='nimopidy', port=1705):
     with Telnet(server, port) as tn:
         data = {"id": 1, "jsonrpc": "2.0", "method": method}
         if params is not None:
@@ -47,7 +49,7 @@ def mopidy_api(method, **kwargs):
     data = {"jsonrpc": "2.0", "id": 1, "method": method}
     if kwargs:
         data['params'] = kwargs
-    return requests.post("http://localhost:6680/mopidy/rpc", data=dumps(data)).json()['result']
+    return requests.post("http://nimopidy:6680/mopidy/rpc", data=dumps(data)).json()['result']
 
 
 def add_random():
@@ -58,7 +60,7 @@ def add_random():
             playlist = Playlist.objects.filter(active=True).order_by('?').first()
             track = choice(mopidy_api('core.playlists.get_items', uri=playlist.uri))
             track_inst = Track.get_or_create_from_mopidy(uri=track['uri'])
-            if not track_inst.last_play or datetime.now() - track_inst.last_play > timedelta(hours=1):
+            if not track_inst.last_play or timezone.now() - track_inst.last_play > timedelta(hours=1):
                 print(f'Randomly added {track["name"]} from {playlist}')
                 mopidy_api('core.tracklist.add', uri=track['uri'])
                 break

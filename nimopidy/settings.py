@@ -10,30 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
-from os.path import abspath, dirname, join
+from os.path import abspath, dirname
+from pathlib import Path
 
 PROJECT = 'nimopidy'
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = dirname(dirname(abspath(__file__)))
+CONF_DIR = Path("/etc/") / PROJECT
+ALLOWED_HOSTS = [PROJECT]
 
+SECRET_KEY = (CONF_DIR / "secret_key").open().read().strip()
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '%k3i3mnq4mff9!(*o=z3tb)osi#c9e6^s6i0w^k52y85d-!2o*'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['nausicaa', 'nausicaa.suginami', 'nausicaa.vpnim', 'localhost', '192.168.1.3']
-ALLOWED_HOSTS += ['totoro', 'totoro.suginami', 'totoro.vpnim']
-if DEBUG:
-    ALLOWED_HOSTS += ['127.0.0.1', 'localhost']
-
-
-# Application definition
+DEBUG = not (CONF_DIR / 'prod').is_file()
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -86,11 +74,13 @@ WSGI_APPLICATION = f'{PROJECT}.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': PROJECT,
+        'USER': PROJECT,
+        'PASSWORD': (CONF_DIR / 'db_password').open().read().strip(),
+        'HOST': 'localhost',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -129,8 +119,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/srv/nimopidy'
-MEDIA_ROOT = join(BASE_DIR, 'media')
+STATIC_ROOT = '/srv/nimopidy/static'
+MEDIA_ROOT = '/srv/nimopidy/media'
 MEDIA_URL = '/media/'
 
 CHANNEL_LAYERS = {

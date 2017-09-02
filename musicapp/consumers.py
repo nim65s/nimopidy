@@ -1,5 +1,6 @@
-from datetime import datetime
 from json import dumps
+
+from django.utils import timezone
 
 from channels import Channel, Group
 
@@ -43,7 +44,8 @@ def mopidy(message):
     elif 'track_playback_ended' in message.content:
         track_inst = Track.get_or_create_from_mopidy(message.content['track_playback_ended']['tl_track']['track'])
         track_inst.playcount += 1
-        track_inst.last_play = datetime.now()
+        track_inst.last_play = timezone.now()
+
         track_inst.save()
         Group('clients').send({'text': dumps({
             'track': track_inst.json(),
@@ -71,7 +73,7 @@ def mopidy(message):
     elif 'options_changed' in message.content:
         pass
     else:
-        print(message.content)
+        print(f'message de mopidy inconnu: {message.content}')
 
 
 def snapcast(message):
