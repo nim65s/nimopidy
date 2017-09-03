@@ -1,7 +1,6 @@
 version: '3'
 
 volumes:
-  srv:
   snap:
 
 services:
@@ -9,6 +8,10 @@ services:
     image: redis
   postgres:
     image: postgres
+    volumes:
+      - "/srv/nimopidy/postgres:/var/lib/postgresql/data"
+    env_file:
+      - .env
   daphne:
     build: .
     expose:
@@ -28,10 +31,9 @@ services:
       - redis
       - postgres
       - snapserver
-      - mopidy
     command: bash -c "./manage.py collectstatic --noinput && ./manage.py migrate && ./manage.py runworker"
     volumes:
-      - "srv:/srv/nimopidy"
+      - "/srv/nimopidy:/srv/nimopidy"
       - "./nimopidy:/app/nimopidy"
       - "./musicapp:/app/musicapp"
       - "./build:/app/build"
@@ -42,10 +44,12 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - "srv:/srv/nimopidy"
+      - "/srv/nimopidy:/srv/nimopidy"
       - "./conf/nginx:/etc/nginx/conf.d"
     links:
       - daphne
+    env_file:
+      - .env
   mopidy:
     build:
       context: .
@@ -54,6 +58,7 @@ services:
       - "6680:6680"
     depends_on:
       - snapserver
+      - worker
     volumes:
       - "./conf/mopidy_global:/etc/mopidy"
       - "./conf/mopidy_local:/root/.config/mopidy"
@@ -70,14 +75,14 @@ services:
   playlists:
     build:
       context: .
-      dockerfile: Dockerfile.nimopidy
+      dockerfile: Dockerfile
     command: ./manage.py playlists
     depends_on:
       - redis
       - postgres
       - daphne
     volumes:
-      - "srv:/srv/nimopidy"
+      - "/srv/nimopidy/:/srv/nimopidy"
       - "./nimopidy:/app/nimopidy"
       - "./musicapp:/app/musicapp"
     env_file:

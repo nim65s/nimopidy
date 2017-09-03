@@ -5,7 +5,7 @@ from django.utils import timezone
 from channels import Channel, Group
 
 from .models import Track
-from .utils import add_random, mopidy_api, telnet_snapcast
+from .utils import add_random, start, telnet_snapcast
 
 
 def ws_connect(message):
@@ -28,9 +28,7 @@ def mopidy(message):
                 'state': message.content['status_report']['state'],
             })})
         else:
-            add_random()
-            mopidy_api('core.playback.play')
-            mopidy_api('core.tracklist.set_consume', value=True)
+            start()
     elif 'playback_state_changed' in message.content:
         Group('clients').send({'text': dumps({
             'state': message.content['playback_state_changed']['new_state'],
@@ -72,6 +70,8 @@ def mopidy(message):
         add_random()
     elif 'options_changed' in message.content:
         pass
+    elif 'playlists_loaded' in message.content:
+        start()
     else:
         print(f'message de mopidy inconnu: {message.content}')
 

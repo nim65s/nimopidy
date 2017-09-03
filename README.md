@@ -24,6 +24,7 @@ Uses [mopidy](https://docs.mopidy.com/en/latest/), [snapcast](https://github.com
 
 - `.env`:
 ```
+NIMOPIDY_HOST=<your_fqdn>
 REDIS_HOST=redis
 MOPIDY_HOST=mopidy
 SNAPSERVER_HOST=snapserver
@@ -60,7 +61,7 @@ wait for `PostgreSQL init process complete; ready for start up.` and stop (`^C`)
 
 (First launch may need 30 min to download and build docker images)
 
-Go to `http://<your_server>:8000`, and launch `snapserver -h <your_server>` from your clients
+Go to `http://<your_fqdn>:8000`, and launch `snapserver -h <your_fqdn>` from your clients
 
 ## Install
 
@@ -182,30 +183,3 @@ server {
     - same artist / name
     - covers
     - live
-
-
-## Find stuff in Mopidy API
-
-### describe
-
-curl -d '{"jsonrpc": "2.0", "id": 1, "method": "core.describe"}' http://localhost:6680/mopidy/rpc|jq
-curl -d '{"jsonrpc": "2.0", "id": 1, "method": "core.describe"}' http://localhost:6680/mopidy/rpc|jq . | grep '^    "'|sort
-echo -e (curl -s -d '{"jsonrpc": "2.0", "id": 1, "method": "core.describe"}' http://localhost:6680/mopidy/rpc|jq '.result."core.tracklist.filter".description')
-
-### get playlists
-
-curl -d '{"jsonrpc": "2.0", "id": 1, "method": "core.playlists.get_playlists", "params": {"include_tracks": false}}' http://localhost:6680/mopidy/rpc|jq
-curl -d '{"jsonrpc": "2.0", "id": 1, "method": "core.playlists.as_list"}' http://localhost:6680/mopidy/rpc|jq
-
-### get images
-
-curl -d '{"jsonrpc": "2.0", "id": 1, "method": "core.library.get_images", "params": {"uris": ["spotify:track:4xEIrUbZn1ySRuFbVv6dl9"]}}' http://localhost:6680/mopidy/rpc|jq
-
-### tracklist
-
-$r.mopidy.tracklist.getTlTracks().done(data => console.log(data));
-
-### Search
-
-curl -s -d '{"jsonrpc": "2.0", "id": 1, "method": "core.describe"}' http://localhost:6680/mopidy/rpc|jq '.result."core.library.search"'
-echo -e (curl -s -d '{"jsonrpc": "2.0", "id": 1, "method": "core.describe"}' http://localhost:6680/mopidy/rpc|jq '.result."core.library.search".description')
