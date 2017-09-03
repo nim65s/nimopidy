@@ -6,7 +6,7 @@ RUN useradd -m -G wheel user
 RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER user
 
-RUN yaourt -S --noconfirm mopidy mopidy-spotify mopidy-youtube python2-pip
+RUN yaourt -S --noconfirm mopidy mopidy-spotify mopidy-youtube python2-pip mpc
 
 USER root
 RUN pip2 install Mopidy-Webhooks

@@ -1,8 +1,10 @@
+from datetime import timedelta
 from io import BytesIO
 
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core import files
 from django.db import models
+from django.utils import timezone
 
 import requests
 
@@ -106,6 +108,24 @@ class Track(NamedModel):
     @classmethod
     def current_from_mopidy(cls):
         return cls.get_or_create_from_mopidy(mopidy_api('core.playback.get_current_tl_track')['track'])
+
+    @classmethod
+    def add_random(cls):
+        if mopidy_api('core.tracklist.get_length') < 10:
+            old_enough = models.Q(last_play=None) | models.Q(last_play__lt=timezone.now() - timedelta(hours=1))
+            active = models.Q(playlisttrack__playlist__active=True)
+            current = models.Q(uri__in=set(t['uri'] for t in mopidy_api('core.tracklist.get_tracks')))
+            track = cls.objects.filter(old_enough, active).exclude(current).order_by('?').first()
+            if track:
+                print(f'Randomly added {track}')
+                mopidy_api('core.tracklist.add', uri=track.uri)
+            else:
+                track = cls.objects.filter(active).exclude(current).order_by('?').first()
+                if track:
+                    print(f'Randomly added already played recently {track}')
+                    mopidy_api('core.tracklist.add', uri=track.uri)
+                else:
+                    print("can't add a random track from an active playlist not already in the current tracklist")
 
 
 class Playlist(NamedModel):

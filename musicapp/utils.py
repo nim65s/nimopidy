@@ -1,10 +1,7 @@
-from datetime import timedelta
 from json import dumps, loads
-from random import choice
 from telnetlib import Telnet
 
 from django.conf import settings
-from django.utils import timezone
 
 import html2text
 import requests
@@ -57,32 +54,10 @@ def mopidy_api(method, **kwargs):
         return []
 
 
-def add_random():
-    from .models import Track, Playlist  # noqa
-
-    if mopidy_api('core.tracklist.get_length') < 10:
-        for _ in range(10):
-            playlist = Playlist.objects.filter(active=True).order_by('?').first()
-            if not playlist:
-                break
-            tracks = mopidy_api('core.playlists.get_items', uri=playlist.uri)
-            if not tracks:
-                break
-            track = choice(tracks)
-            track_inst = Track.get_or_create_from_mopidy(uri=track['uri'])
-            if not track_inst.last_play or timezone.now() - track_inst.last_play > timedelta(hours=1):
-                print(f'Randomly added {track["name"]} from {playlist}')
-                mopidy_api('core.tracklist.add', uri=track['uri'])
-                break
-        else:
-            print("Can't find a random track to add")
-
-
 def start():
-    if mopidy_api('core.tracklist.get_consume') == 'false':
+    if not mopidy_api('core.tracklist.get_consume'):
         mopidy_api('core.tracklist.set_consume', value=True)
         print('set consume')
     if mopidy_api('core.playback.get_state') == 'stopped':
         mopidy_api('core.playback.play')
         print('play')
-    add_random()
