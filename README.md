@@ -60,6 +60,8 @@ wait for `PostgreSQL init process complete; ready for start up.` and stop (`^C`)
 
 (First launch may need 30 min to download and build docker images)
 
+Go to http://<your server>:8000, and launch `snapserver -h <your server>` from your clients
+
 ## Install
 
 You need: 
