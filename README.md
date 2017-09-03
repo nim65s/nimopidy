@@ -1,5 +1,19 @@
 # NiMoPiDy
 
+A collaborative music player that can play simultaneously in multiple rooms and from many sources (for now, only local,
+youtube, and spotify have been tested)
+
+Anybody can add a song from any source in the tracklist, and random songs from selected playlists that
+have not been played in the last hour are added when there is less than 10 songs in the tracklist.
+
+Can be controlled from the web app or from any mpd client.
+
+Shows lyrics and album covers.
+
+Uses [mopidy](https://docs.mopidy.com/en/latest/), [snapcast](https://github.com/badaix/snapcast),
+[django](https://www.djangoproject.com/), [channels](https://channels.readthedocs.io/en/stable/), and
+[react](https://facebook.github.io/react/)
+
 ## Chat about this project
 
 [#nimopidy:matrix.org](https://riot.im/app/#/room/#nimopidy:matrix.org)
@@ -7,8 +21,6 @@
 ## Launch everything with docker-compose
 
 ### Exemple Configuration
-
-Get your own passwords, those ones are fake :)
 
 - `.env`:
 ```
@@ -18,8 +30,8 @@ SNAPSERVER_HOST=snapserver
 POSTGRES_HOST=postgres
 POSTGRES_USER=postgres
 POSTGRES_NAME=postgres
-POSTGRES_PASSWORD=rai2jeHeohT5eu7spa7dieDo
-DJANGO_SECRET_KEY=ke4OtohPQuie1ithZuix9kow
+POSTGRES_PASSWORD=<write some random stuff here>
+DJANGO_SECRET_KEY=<write some random stuff here>
 DJANGO_DEBUG=False
 LANGAGE_CODE=fr-FR
 TIME_ZONE=Europe/Paris
@@ -35,11 +47,14 @@ client_secret = JaT_eeh8Ain8pyi9D_iB0gee6ueifeiWs_W_NvS_Cok=
 bitrate = 160
 ```
 
+Get a premium account and your own passwords, those ones are fake :)
+You can get `client_id` & `client_secret` on [mopidy's website](https://www.mopidy.com/authenticate/#spotify).
+
 ### Start
 
 `docker-compose up postgres`
 
-wait for `PostgreSQL init process complete; ready for start up.`
+wait for `PostgreSQL init process complete; ready for start up.` and stop (`^C`) it.
 
 `docker-compose up`
 
@@ -50,10 +65,10 @@ wait for `PostgreSQL init process complete; ready for start up.`
 You need: 
 
 - a DNS where 'nimopidy' points to your server
-- [snapcast](https://github.com/badaix/snapcast)
+- snapcast
 - [redis](https://redis.io/)
 - [postgres](https://www.postgresql.org/)
-- [mopidy](https://docs.mopidy.com/en/latest/)
+- mopidy
 - a [virtualenv](https://virtualenv.pypa.io/en/stable/) (recommended)
 
 - configure mopidy for snapcast & nimopidy's backend
@@ -74,7 +89,7 @@ create user nimopidy with password '<POSTGRES_PASSWORD>';
 create database nimopidy owner nimopidy;
 ```
 
-- setup the [django](https://www.djangoproject.com/) backend:
+- setup the django backend:
 
 ```bash
 mkdir /etc/nimopidy
@@ -87,7 +102,7 @@ pip install -U -r requirements.txt
 ./manage.py runserver
 ```
 
-- setup the [react](https://facebook.github.io/react/) frontend:
+- setup the react frontend:
 
 ```bash
 npm install
@@ -147,6 +162,7 @@ server {
 - shuffle tracklist
 - lyrics versionning (django-reversion)
 - search in selected playlists
+- translations
 
 ## Later
 
