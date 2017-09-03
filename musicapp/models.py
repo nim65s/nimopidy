@@ -98,9 +98,14 @@ class Track(NamedModel):
                         album_inst.get_cover()
                         album_inst.save()
                 track_inst.album = album_inst
+            track_inst.length = track_data['length']
             track_inst.save()
             track_inst.get_lyrics()
         return track_inst
+
+    @classmethod
+    def current_from_mopidy(cls):
+        return cls.get_or_create_from_mopidy(mopidy_api('core.playback.get_current_tl_track')['track'])
 
 
 class Playlist(NamedModel):
