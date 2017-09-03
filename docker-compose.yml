@@ -10,9 +10,7 @@ services:
   postgres:
     image: postgres
   daphne:
-    build:
-      context: .
-      dockerfile: Dockerfile.nimopidy
+    build: .
     expose:
       - "8000"
     depends_on:
@@ -25,9 +23,7 @@ services:
       - "./nimopidy:/app/nimopidy"
       - "./musicapp:/app/musicapp"
   worker:
-    build:
-      context: .
-      dockerfile: Dockerfile.nimopidy
+    build: .
     depends_on:
       - redis
       - postgres
