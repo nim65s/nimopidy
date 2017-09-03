@@ -55,6 +55,7 @@ services:
       context: .
       dockerfile: Dockerfile.mopidy
     ports:
+      - "6600:6600"
       - "6680:6680"
     depends_on:
       - snapserver
