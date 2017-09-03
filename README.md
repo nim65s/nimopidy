@@ -6,9 +6,38 @@
 
 ## Launch everything with docker-compose
 
+### Exemple Configuration
+
+(Get your own passwords, those ones are fake :))
+
+- `.env`:
+```
+POSTGRES_PASSWORD=rai2jeHeohT5eu7spa7dieDo
+DJANGO_SECRET_KEY=ke4OtohPQuie1ithZuix9kow
+DJANGO_DEBUG=False
+LANGAGE_CODE=fr-FR
+TIME_ZONE=Europe/Paris
+```
+
+- `conf/mopidy_local/mopidy.conf`
+```
+[spotify]
+username = Nim65s
+password = Euyohh8ousah6AiRAing1pah
+client_id = 1ee8c67a-b625-411a-959d-a326becc0a12
+client_secret = JaT_eeh8Ain8pyi9D_iB0gee6ueifeiWs_W_NvS_Cok=
+bitrate = 160
+```
+
+### Start
+
+`docker-compose up postgres`
+
+wait for `PostgreSQL init process complete; ready for start up.`
+
 `docker-compose up`
 
-(First launch can be *really* long)
+(First launch may need 30 min to download and build docker images)
 
 ## Install
 
@@ -113,6 +142,10 @@ server {
 
 ## Later
 
+- https://github.com/jwilder/dockerize
+    - use alpine instead of arch
+    - wait for stuff
+    - generate unique mopidy configuration file
 - Build android app http://jkaufman.io/react-web-native-codesharing/
 - django-knocker (desktop notifications)
 - Timing / kara / performous

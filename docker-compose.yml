@@ -62,7 +62,8 @@ services:
     depends_on:
       - snapserver
     volumes:
-      - "./conf/mopidy:/root/.config/mopidy"
+      - "./conf/mopidy_global:/etc/mopidy"
+      - "./conf/mopidy_local:/root/.config/mopidy"
       - "snap:/snap"
   snapserver:
     build:

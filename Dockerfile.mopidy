@@ -12,4 +12,4 @@ USER root
 RUN pip2 install Mopidy-Webhooks
 RUN mkdir /root/.config
 
-ENTRYPOINT /usr/bin/mopidy
+ENTRYPOINT /usr/bin/mopidy --config /etc/mopidy:/root/.config/mopidy
