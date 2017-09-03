@@ -1,8 +1,7 @@
 version: '3'
 
 volumes:
-  static:
-  media:
+  srv:
   snap:
 
 services:
@@ -36,8 +35,7 @@ services:
       - mopidy
     command: bash -c "./manage.py collectstatic --noinput && ./manage.py migrate && ./manage.py runworker"
     volumes:
-      - "media:/media"
-      - "static:/static"
+      - "srv:/srv/nimopidy"
       - "./nimopidy:/app/nimopidy"
       - "./musicapp:/app/musicapp"
       - "./build:/app/build"
@@ -48,8 +46,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - "static:/static"
-      - "media:/media"
+      - "srv:/srv/nimopidy"
       - "./conf/nginx:/etc/nginx/conf.d"
     links:
       - daphne
@@ -84,7 +81,7 @@ services:
       - postgres
       - daphne
     volumes:
-      - "media:/media"
+      - "srv:/srv/nimopidy"
       - "./nimopidy:/app/nimopidy"
       - "./musicapp:/app/musicapp"
     env_file:

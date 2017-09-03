@@ -8,10 +8,16 @@
 
 ### Exemple Configuration
 
-(Get your own passwords, those ones are fake :))
+Get your own passwords, those ones are fake :)
 
 - `.env`:
 ```
+REDIS_HOST=redis
+MOPIDY_HOST=mopidy
+SNAPSERVER_HOST=snapserver
+POSTGRES_HOST=postgres
+POSTGRES_USER=postgres
+POSTGRES_NAME=postgres
 POSTGRES_PASSWORD=rai2jeHeohT5eu7spa7dieDo
 DJANGO_SECRET_KEY=ke4OtohPQuie1ithZuix9kow
 DJANGO_DEBUG=False
@@ -77,7 +83,7 @@ openssl rand -base64 32 > /etc/nimopidy/secret_key
 pip install -U -r requirements.txt
 ./manage.py migrate
 ./manage.py playlists # populates database from mopidy, can be really long, but you don't have to wait for it to finish
-./manage.py createsuperuser # optional, if you want to access to the admin interface
+./manage.py createsuperuser # only if you want an access to the admin interface
 ./manage.py runserver
 ```
 
@@ -128,6 +134,8 @@ server {
 
 
 ```
+
+- Go to http://nimopidy/
 
 ## TODO
 

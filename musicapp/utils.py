@@ -3,6 +3,7 @@ from json import dumps, loads
 from random import choice
 from telnetlib import Telnet
 
+from django.conf import settings
 from django.utils import timezone
 
 import html2text
@@ -36,8 +37,8 @@ def get_lyrics(artist, song):
     return html2text.html2text(str(lyrics)[1:-1]) if lyrics else req.url
 
 
-def telnet_snapcast(method, params=None, server='nimopidy', port=1705):
-    with Telnet(server, port) as tn:
+def telnet_snapcast(method, params=None):
+    with Telnet(settings.SNAPSERVER_HOST, settings.SNAPSERVER_PORT) as tn:
         data = {"id": 1, "jsonrpc": "2.0", "method": method}
         if params is not None:
             data["params"] = params
@@ -49,7 +50,9 @@ def mopidy_api(method, **kwargs):
     data = {"jsonrpc": "2.0", "id": 1, "method": method}
     if kwargs:
         data['params'] = kwargs
-    return requests.post("http://nimopidy:6680/mopidy/rpc", data=dumps(data)).json()['result']
+    r = requests.post(f"http://{settings.MOPIDY_HOST}:{settings.MOPIDY_PORT}/mopidy/rpc", data=dumps(data))
+    r.raise_for_status()
+    return r.json()['result']
 
 
 def add_random():

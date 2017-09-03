@@ -74,9 +74,9 @@ WSGI_APPLICATION = f'{PROJECT}.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'USER': 'postgres',
-        'NAME': 'postgres',
-        'HOST': 'postgres',
+        'USER': environ.get('POSTGRES_USER', PROJECT),
+        'NAME': environ.get('POSTGRES_NAME', PROJECT),
+        'HOST': environ.get('POSTGRES_HOST', PROJECT),
         'PASSWORD': environ['POSTGRES_PASSWORD']
     }
 }
@@ -113,17 +113,22 @@ USE_L10N = True
 
 USE_TZ = True
 
+STATIC_ROOT = '/srv/nimopidy/static/'
+MEDIA_ROOT = '/srv/nimopidy/media/'
 STATIC_URL = '/static/'
-STATIC_ROOT = '/static/'
-MEDIA_ROOT = '/media/'
 MEDIA_URL = '/media/'
 
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'asgi_redis.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('redis', 6379)],
+            'hosts': [(environ.get('REDIS_HOST', PROJECT), 6379)],
         },
         'ROUTING': f'{PROJECT}.routing.channel_routing',
     },
 }
+
+MOPIDY_HOST = environ.get('MOPIDY_HOST', PROJECT)
+MOPIDY_PORT = environ.get('MOPIDY_PORT', 6680)
+SNAPSERVER_HOST = environ.get('SNAPSERVER_HOST', PROJECT)
+SNAPSERVER_PORT = environ.get('SNAPSERVER_PORT', 1705)
