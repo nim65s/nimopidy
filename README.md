@@ -86,17 +86,17 @@ api_key = whocares
 
 - create a user for postgres:
 
+`export POSTGRES_PASSWORD=$(openssl rand -base64 32)`
+
 ```sql
-create user nimopidy with password '<POSTGRES_PASSWORD>';
+create user nimopidy with password '$POSTGRES_PASSWORD';
 create database nimopidy owner nimopidy;
 ```
 
 - setup the django backend:
 
 ```bash
-mkdir /etc/nimopidy
-echo '<POSTGRES_PASSWORD>' > /etc/nimopidy/db_password
-openssl rand -base64 32 > /etc/nimopidy/secret_key
+export DJANGO_SECRET_KEY=$(openssl rand -base64 32)
 pip install -U -r requirements.txt
 ./manage.py migrate
 ./manage.py playlists # populates database from mopidy, can be really long, but you don't have to wait for it to finish
@@ -153,6 +153,7 @@ server {
 ```
 
 - Go to http://nimopidy/
+- Run `snapclient -h nimopidy`
 
 ## TODO
 
@@ -163,15 +164,15 @@ server {
     - remove duplicates
 - shuffle tracklist
 - lyrics versionning (django-reversion)
-- search in selected playlists
+- search in selected/all playlists
 - translations
-
-## Later
-
 - https://github.com/jwilder/dockerize
     - use alpine instead of arch
     - wait for stuff
     - generate unique mopidy configuration file
+
+## Later
+
 - Build android app http://jkaufman.io/react-web-native-codesharing/
 - django-knocker (desktop notifications)
 - Timing / kara / performous
