@@ -1,0 +1,15 @@
+FROM base/archlinux:latest
+
+RUN echo -e "[archlinuxfr]\nSigLevel = Never\nServer = http://repo.archlinux.fr/x86_64" >> /etc/pacman.conf
+RUN pacman -Syu --noconfirm yaourt base-devel git
+RUN useradd -m -G wheel user
+RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER user
+
+RUN yaourt -S --noconfirm mopidy mopidy-spotify mopidy-youtube python2-pip
+
+USER root
+RUN pip2 install Mopidy-Webhooks
+RUN mkdir /root/.config
+
+ENTRYPOINT /usr/bin/mopidy

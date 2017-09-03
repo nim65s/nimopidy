@@ -1,0 +1,12 @@
+FROM base/archlinux:latest
+
+RUN echo -e "[archlinuxfr]\nSigLevel = Never\nServer = http://repo.archlinux.fr/x86_64" >> /etc/pacman.conf
+RUN pacman -Syu --noconfirm yaourt base-devel git
+RUN useradd -m -G wheel user
+RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER user
+
+RUN yaourt -S --noconfirm snapcast
+
+USER root
+ENTRYPOINT /usr/bin/snapserver --user snapserver:snapserver -s pipe:///snap/snapfifo?name=default

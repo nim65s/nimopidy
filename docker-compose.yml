@@ -3,6 +3,7 @@ version: '3'
 volumes:
   static:
   media:
+  snap:
 
 services:
   redis:
@@ -10,7 +11,9 @@ services:
   postgres:
     image: postgres
   daphne:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.nimopidy
     expose:
       - "8000"
     depends_on:
@@ -23,14 +26,18 @@ services:
       - "./nimopidy:/app/nimopidy"
       - "./musicapp:/app/musicapp"
   worker:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.nimopidy
     depends_on:
       - redis
       - postgres
+      - snapserver
+      - mopidy
     command: bash -c "./manage.py collectstatic --noinput && ./manage.py migrate && ./manage.py runworker"
     volumes:
-      - "static:/static"
       - "media:/media"
+      - "static:/static"
       - "./nimopidy:/app/nimopidy"
       - "./musicapp:/app/musicapp"
       - "./build:/app/build"
@@ -43,6 +50,41 @@ services:
     volumes:
       - "static:/static"
       - "media:/media"
-      - "./conf/:/etc/nginx/conf.d"
+      - "./conf/nginx:/etc/nginx/conf.d"
     links:
       - daphne
+  mopidy:
+    build:
+      context: .
+      dockerfile: Dockerfile.mopidy
+    ports:
+      - "6680:6680"
+    depends_on:
+      - snapserver
+    volumes:
+      - "./conf/mopidy:/root/.config/mopidy"
+      - "snap:/snap"
+  snapserver:
+    build:
+      context: .
+      dockerfile: Dockerfile.snapserver
+    ports:
+      - "1705:1705"
+      - "1704:1704"
+    volumes:
+      - "snap:/snap"
+  playlists:
+    build:
+      context: .
+      dockerfile: Dockerfile.nimopidy
+    command: ./manage.py playlists
+    depends_on:
+      - redis
+      - postgres
+      - daphne
+    volumes:
+      - "media:/media"
+      - "./nimopidy:/app/nimopidy"
+      - "./musicapp:/app/musicapp"
+    env_file:
+      - .env

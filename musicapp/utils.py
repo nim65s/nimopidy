@@ -58,6 +58,8 @@ def add_random():
     if mopidy_api('core.tracklist.get_length') < 10:
         for _ in range(10):
             playlist = Playlist.objects.filter(active=True).order_by('?').first()
+            if not playlist:
+                break
             track = choice(mopidy_api('core.playlists.get_items', uri=playlist.uri))
             track_inst = Track.get_or_create_from_mopidy(uri=track['uri'])
             if not track_inst.last_play or timezone.now() - track_inst.last_play > timedelta(hours=1):

@@ -16,7 +16,7 @@ from os.path import abspath, dirname
 PROJECT = 'nimopidy'
 
 BASE_DIR = dirname(dirname(abspath(__file__)))
-ALLOWED_HOSTS = [PROJECT, 'localhost:8000', 'localhost']
+ALLOWED_HOSTS = [PROJECT, 'daphne', 'localhost']
 
 SECRET_KEY = environ['DJANGO_SECRET_KEY']
 

@@ -4,6 +4,12 @@
 
 [#nimopidy:matrix.org](https://riot.im/app/#/room/#nimopidy:matrix.org)
 
+## Launch everything with docker-compose
+
+`docker-compose up`
+
+(First launch can be *really* long)
+
 ## Install
 
 You need: 
