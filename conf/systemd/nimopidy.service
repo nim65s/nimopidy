@@ -1,0 +1,14 @@
+[Unit]
+Description=Nimopidy
+After=network.target docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/nim/web/nimopidy/
+ExecStart=/usr/bin/docker-compose up
+ExecStop=/usr/bin/docker-compose down
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
