@@ -2,10 +2,11 @@ from json import loads
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import UpdateView
 
 from channels import Channel
 
-from .models import Playlist
+from .models import Playlist, Track
 from .utils import telnet_snapcast
 
 
@@ -28,3 +29,10 @@ def playlists(request):
         req = loads(request.body)
         Playlist.objects.filter(uri=req['uri']).update(active=req['active'])
     return JsonResponse({'playlists': [pl.json() for pl in Playlist.objects.all()]})
+
+
+class TrackUpdateView(UpdateView):
+    model = Track
+    fields = ['lyrics']
+    slug_field = 'uri'
+    success_url = '/'
