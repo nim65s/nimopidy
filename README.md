@@ -158,7 +158,6 @@ server {
 
 ## TODO
 
-- update / modify: lyrics, cover & infos
 - playlist management
     - add a song to a playlist
     - diff two playlists

@@ -93,3 +93,15 @@ services:
       - "./musicapp:/app/musicapp"
     env_file:
       - .env
+  play:
+    build: .
+    command: ./manage.py start
+    depends_on:
+      - redis
+      - postgres
+      - daphne
+    env_file:
+      - .env
+    volumes:
+      - "./nimopidy:/app/nimopidy"
+      - "./musicapp:/app/musicapp"
