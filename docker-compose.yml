@@ -6,14 +6,17 @@ volumes:
 services:
   redis:
     image: redis
+    restart: always
   postgres:
     image: postgres
+    restart: always
     volumes:
       - "/srv/nimopidy/postgres:/var/lib/postgresql/data"
     env_file:
       - .env
   daphne:
     build: .
+    restart: always
     expose:
       - "8000"
     depends_on:
@@ -27,6 +30,7 @@ services:
       - "./musicapp:/app/musicapp"
   worker:
     build: .
+    restart: always
     depends_on:
       - redis
       - postgres
@@ -41,6 +45,7 @@ services:
       - .env
   nginx:
     image: nginx
+    restart: always
     ports:
       - "8000:8000"
     volumes:
@@ -54,6 +59,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.mopidy
+    restart: always
     ports:
       - "6600:6600"
       - "6680:6680"
@@ -68,15 +74,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.snapserver
+    restart: always
     ports:
       - "1705:1705"
       - "1704:1704"
     volumes:
       - "snap:/snap"
   playlists:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     command: ./manage.py playlists
     depends_on:
       - redis
