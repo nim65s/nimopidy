@@ -22,7 +22,7 @@ services:
     depends_on:
       - redis
       - postgres
-    command: daphne -b 0.0.0.0 -p 8000 nimopidy.asgi:channel_layer
+    command: daphne -b 0.0.0.0 nimopidy.asgi:channel_layer
     env_file:
       - .env
   worker:
@@ -37,25 +37,14 @@ services:
       - "/srv/nimopidy/nimopidy:/srv/nimopidy"
     env_file:
       - .env
-  migrate:
-    build: .
-    depends_on:
-      - postgres
-    command: ./manage.py migrate
-    volumes:
-      - "/srv/nimopidy/nimopidy:/srv/nimopidy"
-    env_file:
-      - .env
   nginx:
     image: nginx
     restart: unless-stopped
     ports:
       - "7000:8000"
     volumes:
-      - "/srv/nimopidy:/srv/nimopidy"
+      - "/srv/nimopidy/nimopidy:/srv/nimopidy"
       - "./conf/nginx:/etc/nginx/conf.d"
-    links:
-      - daphne
     env_file:
       - .env
   mopidy:
@@ -83,23 +72,3 @@ services:
       - "1704:1704"
     volumes:
       - "snap:/snap"
-  playlists:
-    build: .
-    command: ./manage.py playlists
-    depends_on:
-      - redis
-      - postgres
-      - daphne
-    volumes:
-      - "/srv/nimopidy/nimopidy/:/srv/nimopidy"
-    env_file:
-      - .env
-  play:
-    build: .
-    command: ./manage.py start
-    depends_on:
-      - redis
-      - postgres
-      - daphne
-    env_file:
-      - .env

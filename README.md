@@ -22,20 +22,10 @@ Uses [mopidy](https://docs.mopidy.com/en/latest/), [snapcast](https://github.com
 
 ### Exemple Configuration
 
-- `.env`:
 ```
-NIMOPIDY_HOST=<your_fqdn>
-REDIS_HOST=redis
-MOPIDY_HOST=mopidy
-SNAPSERVER_HOST=snapserver
-POSTGRES_HOST=postgres
-POSTGRES_USER=postgres
-POSTGRES_NAME=postgres
-POSTGRES_PASSWORD=<write some random stuff here>
-DJANGO_SECRET_KEY=<write some random stuff here>
-DJANGO_DEBUG=False
-LANGAGE_CODE=fr-FR
-TIME_ZONE=Europe/Paris
+echo NIMOPIDY_HOST=$(hostname -f) >> .env
+echo POSTGRES_PASSWORD=$(openssl rand -base64 32) >> .env
+echo DJANGO_SECRET_KEY=$(openssl rand -base64 32) >> .env
 ```
 
 - `conf/mopidy_local/mopidy.conf`:
@@ -53,57 +43,17 @@ You can get `client_id` & `client_secret` on [mopidy's website](https://www.mopi
 
 ### Start
 
-`docker-compose up postgres`
-
-wait for `PostgreSQL init process complete; ready for start up.` and stop (`^C`) it.
-
-`docker-compose up`
-
-(First launch may need 30 min to download and build docker images)
-
-Go to `http://<your_fqdn>:8000`, and launch `snapserver -h <your_fqdn>` from your clients
-
-## Install
-
-You need: 
-
-- a DNS where 'nimopidy' points to your server
-- snapcast
-- [redis](https://redis.io/)
-- [postgres](https://www.postgresql.org/)
-- mopidy
-- a [virtualenv](https://virtualenv.pypa.io/en/stable/) (recommended)
-
-- configure mopidy for snapcast & nimopidy's backend
-
 ```
-[audio]
-output = audioresample ! audioconvert ! audio/x-raw,rate=48000,channels=2,format=S16LE ! wavenc ! filesink location=/tmp/snapfifo
-
-[webhooks]
-webhook_url = http://nimopidy/webhooks
-api_key = whocares
+docker-compose up -d postgres
+docker-compose build
+docker-compose up -d
+docker exec nimopidy_daphne_1 ./manage.py migrate
+docker exec nimopidy_daphne_1 ./manage.py collectstatic --no-input
+docker exec nimopidy_daphne_1 ./manage.py playlists
 ```
+(The last one can be *really* long, but you can let it run in the background while it retrievs all your playlists)
 
-- create a user for postgres:
-
-`export POSTGRES_PASSWORD=$(openssl rand -base64 32)`
-
-```sql
-create user nimopidy with password '$POSTGRES_PASSWORD';
-create database nimopidy owner nimopidy;
-```
-
-- setup the django backend:
-
-```bash
-export DJANGO_SECRET_KEY=$(openssl rand -base64 32)
-pip install -U -r requirements.txt
-./manage.py migrate
-./manage.py playlists # populates database from mopidy, can be really long, but you don't have to wait for it to finish
-./manage.py createsuperuser # only if you want an access to the admin interface
-./manage.py runserver
-```
+Go to `http://nimopidy:7000`, and launch `snapserver -h nimopidy` from your clients
 
 - setup the react frontend:
 
