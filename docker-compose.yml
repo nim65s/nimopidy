@@ -6,17 +6,17 @@ volumes:
 services:
   redis:
     image: redis
-    restart: always
+    restart: unless-stopped
   postgres:
     image: postgres
-    restart: always
+    restart: unless-stopped
     volumes:
       - "/srv/nimopidy/postgres:/var/lib/postgresql/data"
     env_file:
       - .env
   daphne:
     build: .
-    restart: always
+    restart: unless-stopped
     expose:
       - "8000"
     depends_on:
@@ -25,29 +25,32 @@ services:
     command: daphne -b 0.0.0.0 -p 8000 nimopidy.asgi:channel_layer
     env_file:
       - .env
-    volumes:
-      - "./nimopidy:/app/nimopidy"
-      - "./musicapp:/app/musicapp"
   worker:
     build: .
-    restart: always
+    restart: unless-stopped
     depends_on:
       - redis
       - postgres
       - snapserver
-    command: bash -c "./manage.py collectstatic --noinput && ./manage.py migrate && ./manage.py runworker"
+    command: ./manage.py runworker
     volumes:
-      - "/srv/nimopidy:/srv/nimopidy"
-      - "./nimopidy:/app/nimopidy"
-      - "./musicapp:/app/musicapp"
-      - "./build:/app/build"
+      - "/srv/nimopidy/nimopidy:/srv/nimopidy"
+    env_file:
+      - .env
+  migrate:
+    build: .
+    depends_on:
+      - postgres
+    command: ./manage.py migrate
+    volumes:
+      - "/srv/nimopidy/nimopidy:/srv/nimopidy"
     env_file:
       - .env
   nginx:
     image: nginx
-    restart: always
+    restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "7000:8000"
     volumes:
       - "/srv/nimopidy:/srv/nimopidy"
       - "./conf/nginx:/etc/nginx/conf.d"
@@ -59,7 +62,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.mopidy
-    restart: always
+    restart: unless-stopped
     ports:
       - "6600:6600"
       - "6680:6680"
@@ -74,7 +77,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.snapserver
-    restart: always
+    restart: unless-stopped
     ports:
       - "1705:1705"
       - "1704:1704"
@@ -88,9 +91,7 @@ services:
       - postgres
       - daphne
     volumes:
-      - "/srv/nimopidy/:/srv/nimopidy"
-      - "./nimopidy:/app/nimopidy"
-      - "./musicapp:/app/musicapp"
+      - "/srv/nimopidy/nimopidy/:/srv/nimopidy"
     env_file:
       - .env
   play:
@@ -102,6 +103,3 @@ services:
       - daphne
     env_file:
       - .env
-    volumes:
-      - "./nimopidy:/app/nimopidy"
-      - "./musicapp:/app/musicapp"
