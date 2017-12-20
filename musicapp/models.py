@@ -39,14 +39,14 @@ class Album(NamedModel):
             fp.write(requests.get(cover_url).content)
             self.cover.save(self.uri, files.File(fp))
             self.save()
-        except:
+        except Exception:
             print(f"Can't get cover for {self}")
 
 
 class Track(NamedModel):
     artists = models.ManyToManyField(Artist, blank=True)
     date = models.PositiveSmallIntegerField(blank=True, null=True)
-    album = models.ForeignKey(Album, blank=True, null=True, related_name='songs')
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, blank=True, null=True, related_name='songs')
     lyrics = models.TextField(null=True, default=None)
     length = models.PositiveIntegerField(null=True)
     disc_no = models.PositiveSmallIntegerField(default=0)
@@ -155,9 +155,9 @@ class Playlist(NamedModel):
 
 
 class PlaylistTrack(models.Model):
-    playlist = models.ForeignKey(Playlist)
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
     number = models.IntegerField()
-    track = models.ForeignKey(Track)
+    track = models.ForeignKey(Track, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.playlist} - {self.number} - {self.track}'

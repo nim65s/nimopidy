@@ -44,67 +44,25 @@ You can get `client_id` & `client_secret` on [mopidy's website](https://www.mopi
 ### Start
 
 ```
-docker-compose up -d postgres
-docker-compose build
+docker-compose up -d postgres redis
+docker-compose build --pull
 docker-compose up -d
 docker exec nimopidy_daphne_1 ./manage.py migrate
 docker exec nimopidy_daphne_1 ./manage.py collectstatic --no-input
 docker exec nimopidy_daphne_1 ./manage.py playlists
 ```
+
 (The last one can be *really* long, but you can let it run in the background while it retrievs all your playlists)
 
 Go to `http://nimopidy:7000`, and launch `snapserver -h nimopidy` from your clients
 
-- setup the react frontend:
+## setup the react frontend:
 
 ```bash
 npm install
 npm run build
 ./manage.py collectstatic
 ```
-
-- setup  [nginx](https://nginx.org/en/)
-
-```
-server {
-    server_name  nimopidy;
-    listen       80;
-
-    access_log  logs/nimopidy.access.log;
-    error_log  logs/nimopidy.access.err;
-
-    tcp_nodelay on;
-
-    location /static {
-        alias /srv/nimopidy/static;
-        expires 30d;
-    }
-
-    location /media {
-        alias /srv/nimopidy/media;
-        expires 30d;
-    }
-
-    location / {
-        proxy_pass http://nimopidy:8000;
-
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Host $server_name;
-
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-
-        proxy_redirect off;
-    }
-}
-
-
-```
-
-- Go to http://nimopidy/
-- Run `snapclient -h nimopidy`
 
 ## TODO
 

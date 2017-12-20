@@ -1,6 +1,6 @@
 FROM python:latest
 
-ENV PYTHONUNBUFFERED 1 \
+ENV PYTHONUNBUFFERED=1 \
    NIMOPIDY_HOST=nimopidy \
    REDIS_HOST=redis \
    MOPIDY_HOST=mopidy \
@@ -18,6 +18,6 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
