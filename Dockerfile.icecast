@@ -1,0 +1,11 @@
+FROM infiniteproject/icecast
+
+COPY silence.mp3 /usr/share/icecast/web
+
+RUN sed -i '$ d' /etc/icecast.xml && \
+   echo "<mount>" >> /etc/icecast.xml && \
+   echo "<mount-name>/nimopidy.ogg</mount-name>" >> /etc/icecast.xml && \
+   echo "<fallback-mount>/silence.mp3</fallback-mount>" >> /etc/icecast.xml && \
+   echo "<fallback-override>1</fallback-override>" >> /etc/icecast.xml && \
+   echo "</mount>" >> /etc/icecast.xml && \
+   echo "</icecast>" >> /etc/icecast.xml

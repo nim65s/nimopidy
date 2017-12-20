@@ -1,8 +1,5 @@
 version: '3'
 
-volumes:
-  snap:
-
 services:
   redis:
     image: redis
@@ -31,7 +28,6 @@ services:
     depends_on:
       - redis
       - postgres
-      - snapserver
     command: ./manage.py runworker
     volumes:
       - "/srv/nimopidy/nimopidy:/srv/nimopidy"
@@ -47,6 +43,14 @@ services:
       - "./conf/nginx:/etc/nginx/conf.d"
     env_file:
       - .env
+  icecast:
+    build:
+      context: .
+      dockerfile: Dockerfile.icecast
+    ports:
+      - 7001:8000
+    env_file:
+      - .env
   mopidy:
     build:
       context: .
@@ -56,19 +60,8 @@ services:
       - "6600:6600"
       - "6680:6680"
     depends_on:
-      - snapserver
       - worker
+      - icecast
     volumes:
       - "./conf/mopidy_global:/etc/mopidy"
       - "./conf/mopidy_local:/root/.config/mopidy"
-      - "snap:/snap"
-  snapserver:
-    build:
-      context: .
-      dockerfile: Dockerfile.snapserver
-    restart: unless-stopped
-    ports:
-      - "1705:1705"
-      - "1704:1704"
-    volumes:
-      - "snap:/snap"
