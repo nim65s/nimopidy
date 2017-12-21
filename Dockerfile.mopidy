@@ -10,6 +10,9 @@ RUN yaourt -S --noconfirm mopidy mopidy-spotify mopidy-youtube python2-pip mpc
 
 USER root
 RUN pip2 install Mopidy-Webhooks
-RUN mkdir /root/.config
+RUN mkdir -p /root/.config/mopidy
+
+COPY conf/mopidy_global.conf /etc/mopidy/mopidy.conf
+COPY conf/mopidy_local.conf /root/.config/mopidy/mopidy.conf
 
 ENTRYPOINT /usr/bin/mopidy --config /etc/mopidy:/root/.config/mopidy
