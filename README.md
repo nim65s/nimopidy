@@ -44,12 +44,12 @@ You can get `client_id` & `client_secret` on [mopidy's website](https://www.mopi
 ### Start
 
 ```
-docker-compose up -d postgres redis
 docker-compose build --pull
+docker-compose up -d postgres redis icecast snapserver
 docker-compose up -d
-docker exec nimopidy_daphne_1 ./manage.py migrate
-docker exec nimopidy_daphne_1 ./manage.py collectstatic --no-input
-docker exec nimopidy_daphne_1 ./manage.py playlists
+docker exec nimopidy_worker_1 ./manage.py migrate
+docker exec nimopidy_worker_1 ./manage.py collectstatic --no-input
+docker exec nimopidy_worker_1 ./manage.py playlists
 ```
 
 (The last one can be *really* long, but you can let it run in the background while it retrievs all your playlists)
