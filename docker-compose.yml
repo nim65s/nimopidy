@@ -49,9 +49,7 @@ services:
     env_file:
       - .env
   icecast:
-    build:
-      context: .
-      dockerfile: Dockerfile.icecast
+    image: infiniteproject/icecast
     ports:
       - 7001:8000
     env_file:
