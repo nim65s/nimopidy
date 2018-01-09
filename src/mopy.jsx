@@ -55,7 +55,10 @@ class Mopy extends React.Component {
 
   handleData(data) {
     let result = JSON.parse(data);
-    if (result.track) this.setState({track: result.track});
+    if (result.track) {
+      this.setState({track: result.track});
+      document.title = result.track.name + ' (' + result.track.artists + ') - NiMoPiDy';
+    }
     if (result.state) this.setState({state: result.state});
     if (result.snapclients) this.setState({snapclients: result.snapclients});
     if (result.time_position) {
