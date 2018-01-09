@@ -28,6 +28,7 @@ class Mopy extends React.Component {
       showTrackList: false,
       tracks: [],
       page: 1,
+      notifications: false,
     }
     this.controlHandlers = this.controlHandlers.bind(this)
     this.updateTrackList = this.updateTrackList.bind(this)
@@ -47,6 +48,15 @@ class Mopy extends React.Component {
     this.mopidy.on('event:muteChanged', (e) => { this.updateMute(e.mute); });
     this.mopidy.on('event:tracklistChanged', () => { this.updateTrackList(); });
     setTimeout(this.updateTrackList, 1000);
+
+    // Notifications
+    if (!("Notification" in window)) this.setState({notifications:false});
+    else if (Notification.permission === "granted") this.setState({notifications:true});
+    else if (Notification.permission !== 'denied') {
+      Notification.requestPermission( (permission) => {
+        if (permission === "granted") this.setState({notifications:true});
+      });
+    }
   }
 
   updateVolume(vol) { this.setState({volume: vol}); }
@@ -55,9 +65,10 @@ class Mopy extends React.Component {
 
   handleData(data) {
     let result = JSON.parse(data);
-    if (result.track) {
+    if (result.track && result.track.name !== this.state.track.name) {
       this.setState({track: result.track});
       document.title = result.track.name + ' (' + result.track.artists + ') - NiMoPiDy';
+      if (this.state.notifications) new Notification(result.track.name, {body: result.track.artists});
     }
     if (result.state) this.setState({state: result.state});
     if (result.snapclients) this.setState({snapclients: result.snapclients});
