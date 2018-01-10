@@ -10,9 +10,9 @@ Can be controlled from the web app or from any mpd client.
 
 Shows lyrics and album covers.
 
-Uses [mopidy](https://docs.mopidy.com/en/latest/), [snapcast](https://github.com/badaix/snapcast),
-[django](https://www.djangoproject.com/), [channels](https://channels.readthedocs.io/en/stable/), and
-[react](https://facebook.github.io/react/)
+Uses [mopidy](https://docs.mopidy.com/en/latest/), [snapcast](https://github.com/badaix/snapcast) and/or
+[icecast](http://icecast.org/), [django](https://www.djangoproject.com/),
+[channels](https://channels.readthedocs.io/en/stable/), and [react](https://facebook.github.io/react/).
 
 ## Chat about this project
 
@@ -44,7 +44,7 @@ You can get `client_id` & `client_secret` on [mopidy's website](https://www.mopi
 ### Start
 
 ```
-docker-compose build --pull
+docker-compose build
 docker-compose up -d postgres redis icecast snapserver
 docker-compose up -d
 docker exec nimopidy_worker_1 ./manage.py migrate
@@ -54,15 +54,7 @@ docker exec nimopidy_worker_1 ./manage.py playlists
 
 (The last one can be *really* long, but you can let it run in the background while it retrievs all your playlists)
 
-Go to `http://nimopidy:7000`, and launch `snapserver -h nimopidy` from your clients
-
-## setup the react frontend:
-
-```bash
-npm install
-npm run build
-./manage.py collectstatic
-```
+Go to `http://nimopidy:7000`, and/or launch `snapserver -h nimopidy` from your clients
 
 ## TODO
 
@@ -82,7 +74,6 @@ npm run build
 ## Later
 
 - Build android app http://jkaufman.io/react-web-native-codesharing/
-- django-knocker (desktop notifications)
 - Timing / kara / performous
 - votes
 - whitelist / blacklist / modération
