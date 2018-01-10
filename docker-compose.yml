@@ -15,7 +15,9 @@ services:
     env_file:
       - .env
   daphne:
-    build: .
+    build:
+      context: .
+      dockerfile: conf/Dockerfile.nimopidy
     restart: unless-stopped
     expose:
       - "8000"
@@ -26,7 +28,9 @@ services:
     env_file:
       - .env
   worker:
-    build: .
+    build:
+      context: .
+      dockerfile: conf/Dockerfile.nimopidy
     restart: unless-stopped
     depends_on:
       - redis
@@ -40,7 +44,7 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: Dockerfile.nginx
+      dockerfile: conf/Dockerfile.nginx
     restart: unless-stopped
     ports:
       - "7000:8000"
@@ -58,7 +62,7 @@ services:
   mopidy:
     build:
       context: .
-      dockerfile: Dockerfile.mopidy
+      dockerfile: conf/Dockerfile.mopidy
     restart: unless-stopped
     ports:
       - "6600:6600"
@@ -72,7 +76,7 @@ services:
   snapserver:
     build:
       context: .
-      dockerfile: Dockerfile.snapserver
+      dockerfile: conf/Dockerfile.snapserver
     restart: unless-stopped
     ports:
       - "1704:1704"
