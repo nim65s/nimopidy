@@ -11,5 +11,5 @@ class Command(BaseCommand):
             try:
                 Playlist.create_from_mopidy()
                 break
-            except:
+            except Exception:
                 sleep(5)

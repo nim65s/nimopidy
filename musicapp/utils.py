@@ -50,7 +50,7 @@ def mopidy_api(method, **kwargs):
     r = requests.post(f"http://{settings.MOPIDY_HOST}:{settings.MOPIDY_PORT}/mopidy/rpc", data=dumps(data))
     try:
         return r.json()['result']
-    except:
+    except Exception:
         return []
 
 

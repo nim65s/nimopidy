@@ -13,5 +13,5 @@ class Command(BaseCommand):
                 Track.add_random()
                 start()
                 break
-            except:
+            except Exception:
                 sleep(5)

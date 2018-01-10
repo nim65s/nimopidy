@@ -1,5 +1,4 @@
 from channels.routing import route
-
 from musicapp.consumers import mopidy, snapcast, ws_connect, ws_disconnect
 
 channel_routing = [
