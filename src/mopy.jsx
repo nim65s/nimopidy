@@ -97,6 +97,7 @@ class Mopy extends React.Component {
       <div>
         <div className="clearfix">
           {this.state.track.cover ? <img src={this.state.track.cover} alt={this.state.track.album} width="300" height="300" className="pull-left hidden-xs" /> : ''}
+          <audio controls autoplay src={'http://' + window.location.hostname + ':7001/nimopidy.mp3'} type="audio/mp3"></audio>
           <h1>{this.state.track.artists}</h1>
           <h2>{this.state.track.name}</h2>
           <h3>{this.state.track.album}</h3>
