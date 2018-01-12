@@ -21,7 +21,7 @@ django-bootstrap3==9.1.0
 django==2.0.1
 h2==3.0.1                 # via twisted
 hpack==3.0.0              # via h2
-html2text==2018.9.1
+html2text==2018.1.9
 hyperframe==5.1.0         # via h2
 hyperlink==17.3.1         # via twisted
 idna==2.6                 # via cryptography, requests, twisted
