@@ -52,6 +52,13 @@ docker exec nimopidy_worker_1 ./manage.py collectstatic --no-input
 docker exec nimopidy_worker_1 ./manage.py playlists
 ```
 
+### Shell
+
+```
+docker exec nimopidy_worker_1 pip install ipython
+docker exec -it nimopidy_worker_1 ./manage.py shell
+```
+
 (The last one can be *really* long, but you can let it run in the background while it retrievs all your playlists)
 
 Go to `http://nimopidy:7000`, and/or launch `snapserver -h nimopidy` from your clients
