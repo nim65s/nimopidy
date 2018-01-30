@@ -60,3 +60,12 @@ def remove_track(request, tlid):
     track = Track.get_or_create_from_mopidy(track_data=data['track'])
     Event.objects.create(user=request.user, action=ACTIONS.remove, track=track)
     return JsonResponse({'result': 'ok'})
+
+
+@login_required
+def next(request):
+    data = mopidy_api('core.playback.get_current_track')
+    track = Track.get_or_create_from_mopidy(track_data=data)
+    Event.objects.create(user=request.user, action=ACTIONS.next, track=track)
+    mopidy_api('core.playback.next')
+    return JsonResponse({'result': 'ok'})

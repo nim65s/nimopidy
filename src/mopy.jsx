@@ -91,7 +91,13 @@ class Mopy extends React.Component {
     this.mopidy = null;
   }
 
-  controlHandlers(command) { if (this.state.connected) { this.mopidy.playback[command](); }}
+  controlHandlers(command) { if (this.state.connected) {
+    if (command === 'next') {
+      fetch('/next', {credentials: 'same-origin'});
+    } else {
+      this.mopidy.playback[command]();
+    }
+  }}
   render() {
     return (
       <div>
