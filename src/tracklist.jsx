@@ -7,7 +7,7 @@ class Track extends React.Component {
   first() { this.props.mopidy.tracklist.move({ start: this.props.n, end: this.props.n, to_position: 1}); }
   up() { this.props.mopidy.tracklist.move({ start: this.props.n, end: this.props.n, to_position: this.props.n-1}); }
   down() { this.props.mopidy.tracklist.move({ start: this.props.n, end: this.props.n, to_position: this.props.n+1}); }
-  del() { this.props.mopidy.tracklist.remove({ tlid: [this.props.track.tlid] }); }
+  del() { fetch('/track/' + this.props.track.tlid + '/del', {credentials: 'same-origin'}); }
 
   render() {
     if (this.props.track) {

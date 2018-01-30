@@ -1,14 +1,15 @@
 from json import loads
 from time import sleep
 
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import UpdateView
 
 from channels import Channel
 
-from .models import Playlist, Track
-from .utils import start, telnet_snapcast
+from .models import ACTIONS, Event, Playlist, Track
+from .utils import mopidy_api, start, telnet_snapcast
 
 
 @csrf_exempt
@@ -51,3 +52,11 @@ class TrackUpdateView(UpdateView):
     fields = ['lyrics']
     slug_field = 'uri'
     success_url = '/'
+
+
+@login_required
+def remove_track(request, tlid):
+    data = mopidy_api('core.tracklist.remove', criteria={'tlid': [tlid]})[0]
+    track = Track.get_or_create_from_mopidy(track_data=data['track'])
+    Event.objects.create(user=request.user, action=ACTIONS.remove, track=track)
+    return JsonResponse({'result': 'ok'})

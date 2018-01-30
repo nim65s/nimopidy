@@ -4,6 +4,8 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
+-e git+git://github.com/nim65s/django-autoslug#egg=django-autoslug
+-e git+git://github.com/Nim65s/ndh.git#egg=ndh
 asgi-redis==1.4.3
 asgiref==1.1.2            # via asgi-redis, channels, daphne
 asn1crypto==0.24.0        # via cryptography
@@ -11,7 +13,7 @@ attrs==17.4.0             # via automat, service-identity
 autobahn==17.10.1         # via daphne
 automat==0.6.0            # via twisted
 beautifulsoup4==4.6.0
-certifi==2017.11.5        # via requests
+certifi==2018.1.18        # via requests
 channels==1.1.8
 chardet==3.0.4            # via requests
 constantly==15.1.0        # via twisted

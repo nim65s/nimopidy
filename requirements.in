@@ -8,3 +8,5 @@ Pillow
 psycopg2
 requests
 Twisted[http2,tls]
+-e git://github.com/Nim65s/ndh.git#egg=ndh
+-e git://github.com/nim65s/django-autoslug#egg=django-autoslug

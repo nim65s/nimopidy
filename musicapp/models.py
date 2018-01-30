@@ -1,6 +1,8 @@
 from datetime import timedelta
+from enum import IntEnum
 from io import BytesIO
 
+from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core import files
 from django.db import models
@@ -8,7 +10,12 @@ from django.utils import timezone
 
 import requests
 
+from ndh.models import TimeStampedModel
+from ndh.utils import enum_to_choices
+
 from .utils import get_lyrics, mopidy_api
+
+ACTIONS = IntEnum('Actions', 'add remove next')
 
 
 class NamedModel(models.Model):
@@ -165,3 +172,18 @@ class PlaylistTrack(models.Model):
     class Meta:
         unique_together = ('playlist', 'number')
         ordering = ('playlist', 'number')
+
+
+class Event(TimeStampedModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    action = models.PositiveSmallIntegerField(choices=enum_to_choices(ACTIONS))
+    track = models.ForeignKey(Track, on_delete=models.PROTECT)
+
+    class Meta:
+        ordering = ['created']
+
+    def __str__(self):
+        return f'{self.user} {self.get_action_display()} {self.track}'
+
+    def json(self):
+        return {'user': self.user.username, 'action': self.get_action_display(), 'track': self.track.name}

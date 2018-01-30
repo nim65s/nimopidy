@@ -30,9 +30,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django.contrib.sites',
     PROJECT,
     'bootstrap3',
     'channels',
+    'ndh',
     'musicapp',
 ]
 
@@ -117,6 +119,8 @@ STATIC_ROOT = '/srv/nimopidy/static/'
 MEDIA_ROOT = '/srv/nimopidy/media/'
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
+
+SITE_ID = 1
 
 CHANNEL_LAYERS = {
     'default': {
