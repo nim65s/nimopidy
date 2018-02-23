@@ -1,12 +1,7 @@
-asgi_redis
 beautifulsoup4
-channels
-Django
-django-bootstrap3
+channels_redis
 html2text
 Pillow
 psycopg2
-requests
-Twisted[http2,tls]
--e git://github.com/Nim65s/ndh.git#egg=ndh
--e git://github.com/nim65s/django-autoslug#egg=django-autoslug
+requests-threads
+ndh<3

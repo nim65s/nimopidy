@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.sites',
-    PROJECT,
     'bootstrap3',
     'channels',
     'ndh',
@@ -122,13 +121,14 @@ MEDIA_URL = '/media/'
 
 SITE_ID = 1
 
+ASGI_APPLICATION = f'{PROJECT}.routing.application'
+
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'asgi_redis.RedisChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             'hosts': [(environ.get('REDIS_HOST', PROJECT), 6379)],
         },
-        'ROUTING': f'{PROJECT}.routing.channel_routing',
     },
 }
 

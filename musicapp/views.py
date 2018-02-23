@@ -6,23 +6,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import UpdateView
 
-from channels import Channel
-
 from .models import ACTIONS, Event, Playlist, Track
-from .utils import mopidy_api, start, telnet_snapcast
-
-
-@csrf_exempt
-def webhooks(request):
-    Channel('mopidy').send(loads(request.body))
-    return JsonResponse({})
-
-
-@csrf_exempt
-def snapcast(request):
-    telnet_snapcast("Client.SetVolume", loads(request.body))
-    Channel('snapcast').send({})
-    return JsonResponse({})
+from .utils import mopidy_api, start
 
 
 @csrf_exempt

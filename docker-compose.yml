@@ -24,7 +24,7 @@ services:
     depends_on:
       - redis
       - postgres
-    command: daphne -b 0.0.0.0 nimopidy.asgi:channel_layer
+    command: daphne -b 0.0.0.0 nimopidy.asgi:application
     env_file:
       - .env
   worker:
@@ -36,7 +36,7 @@ services:
       - redis
       - postgres
       - snapserver
-    command: ./manage.py runworker
+    command: ./manage.py runworker mopidy snapcast
     volumes:
       - "/srv/nimopidy/nimopidy:/srv/nimopidy"
     env_file:
