@@ -8,7 +8,7 @@ COPY src src
 
 RUN touch public/index.html && npm install && npm run build
 
-FROM python:latest
+FROM python:alpine3.7
 
 ENV PYTHONUNBUFFERED=1 \
    NIMOPIDY_HOST=nimopidy \
@@ -28,7 +28,16 @@ RUN mkdir /back
 WORKDIR /back
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+ENV PYTHONPATH=/usr/lib/python3.6/site-packages
+RUN apk update -q && apk add -q --no-cache \
+    py3-psycopg2 \
+    python3-dev \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    openssl-dev \
+    py3-pillow \
+ && pip3 install --no-cache-dir -r requirements.txt
 
 COPY musicapp musicapp
 COPY nimopidy nimopidy
@@ -39,3 +48,10 @@ RUN mv build/static/css/main.*.css.map nimopidy/static/css/main.css.map && \
     mv build/static/css/main.*.css     nimopidy/static/css/main.css     && \
     mv build/static/js/main.*.js.map   nimopidy/static/js/main.js.map   && \
     mv build/static/js/main.*.js       nimopidy/static/js/main.js
+
+CMD while ! nc -z postgres 5432; do sleep 1; done \
+ && ./manage.py migrate \
+ && ./manage.py collectstatic --no-input \
+ && daphne \
+    -b 0.0.0.0 \
+    nimopidy.asgi:channel_layer

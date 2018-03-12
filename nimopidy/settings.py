@@ -113,8 +113,8 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_ROOT = '/srv/nimopidy/static/'
-MEDIA_ROOT = '/srv/nimopidy/media/'
+STATIC_ROOT = '/srv/static/'
+MEDIA_ROOT = '/srv/media/'
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 

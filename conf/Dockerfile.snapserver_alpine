@@ -1,0 +1,7 @@
+FROM alpine:edge
+
+RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
+ && apk update -q \
+ && apk add -q snapcast@testing
+
+ENTRYPOINT snapserver -s pipe:///snap/snapfifo?name=default
