@@ -1,4 +1,14 @@
 node_modules
 package-lock.json
-.git
+*.cfg
 .env
+.git
+*.in
+LICENSE
+*.md
+*.orig
+*/__pycache__
+.python-version
+*.sqlite3
+.venv
+*.yml

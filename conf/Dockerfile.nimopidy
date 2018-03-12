@@ -39,15 +39,17 @@ RUN apk update -q && apk add -q --no-cache \
     py3-pillow \
  && pip3 install --no-cache-dir -r requirements.txt
 
+
 COPY musicapp musicapp
 COPY nimopidy nimopidy
 COPY manage.py .
 
 COPY --from=front /front/build /back/build
-RUN mv build/static/css/main.*.css.map nimopidy/static/css/main.css.map && \
-    mv build/static/css/main.*.css     nimopidy/static/css/main.css     && \
-    mv build/static/js/main.*.js.map   nimopidy/static/js/main.js.map   && \
-    mv build/static/js/main.*.js       nimopidy/static/js/main.js
+RUN mkdir -p musicapp/static/css musicapp/static/js \
+ && cp build/static/css/main.*.css.map musicapp/static/css/main.css.map \
+ && cp build/static/css/main.*.css     musicapp/static/css/main.css     \
+ && cp build/static/js/main.*.js.map   musicapp/static/js/main.js.map   \
+ && cp build/static/js/main.*.js       musicapp/static/js/main.js
 
 CMD while ! nc -z postgres 5432; do sleep 1; done \
  && ./manage.py migrate \
