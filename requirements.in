@@ -1,7 +1,7 @@
 beautifulsoup4
 channels_redis
 html2text
-Pillow
-psycopg2
 requests-threads
 ndh<3
+requests
+Twisted[http2,tls]

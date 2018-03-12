@@ -1,6 +1,8 @@
 version: '3'
 
 volumes:
+  srv:
+  sql:
   snap:
 
 services:
@@ -8,12 +10,15 @@ services:
     image: redis
     restart: unless-stopped
   postgres:
-    image: postgres
+    image: postgres:10-alpine
     restart: unless-stopped
-    volumes:
-      - "/srv/nimopidy/postgres:/var/lib/postgresql/data"
     env_file:
       - .env
+    volumes:
+      - "sql:/var/lib/postgresql/data"
+  memcached:
+    image: memcached:alpine
+    restart: unless-stopped
   daphne:
     build:
       context: .
@@ -24,9 +29,16 @@ services:
     depends_on:
       - redis
       - postgres
-    command: daphne -b 0.0.0.0 nimopidy.asgi:application
+      - memcached
     env_file:
       - .env
+    networks:
+      - traefik
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host: nimopidy, nimopidy.${DOMAIN_NAME:-local}"
+      - "traefik.docker.network=traefik"
   worker:
     build:
       context: .
@@ -36,22 +48,22 @@ services:
       - redis
       - postgres
       - snapserver
+      - memcached
     command: ./manage.py runworker mopidy snapcast
     volumes:
-      - "/srv/nimopidy/nimopidy:/srv/nimopidy"
+      - "srv:/srv"
     env_file:
       - .env
   nginx:
-    build:
-      context: .
-      dockerfile: conf/Dockerfile.nginx
+    image: nim65s/ndh:nginx
     restart: unless-stopped
-    ports:
-      - "7000:8000"
     volumes:
-      - "/srv/nimopidy/nimopidy:/srv/nimopidy"
-    env_file:
-      - .env
+      - "srv:/srv"
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host: nimopidy, nimopidy.${DOMAIN_NAME:-local}; PathPrefix: /static, /media"
   icecast:
     image: infiniteproject/icecast
     restart: unless-stopped
@@ -69,6 +81,7 @@ services:
       - "6680:6680"
     depends_on:
       - worker
+      - daphne
       - icecast
       - snapserver
     volumes:
@@ -76,10 +89,14 @@ services:
   snapserver:
     build:
       context: .
-      dockerfile: conf/Dockerfile.snapserver
+      dockerfile: conf/Dockerfile.snapserver_alpine
     restart: unless-stopped
     ports:
       - "1704:1704"
       - "1705:1705"
     volumes:
       - "snap:/snap"
+
+networks:
+  traefik:
+    external: true

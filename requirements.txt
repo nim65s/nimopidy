@@ -5,35 +5,43 @@
 #    pip-compile --output-file requirements.txt requirements.in
 #
 aioredis==1.0.0           # via channels-redis
-asgiref==2.1.6            # via channels, channels-redis, daphne
+asgiref==2.2.0            # via channels, channels-redis
+asn1crypto==0.24.0        # via cryptography
 async-timeout==2.0.0      # via aioredis, asgiref
-attrs==17.4.0             # via automat
-autobahn==17.10.1         # via daphne
+attrs==17.4.0             # via automat, service-identity
+autobahn==18.3.1          # via daphne
 automat==0.6.0            # via twisted
 beautifulsoup4==4.6.0
 certifi==2018.1.18        # via requests
-channels-redis==2.0.3
+channels-redis==2.1.0
 channels==2.0.2           # via channels-redis
 chardet==3.0.4            # via requests
 constantly==15.1.0        # via twisted
-daphne==2.0.3             # via channels
+cryptography==2.1.4       # via pyopenssl
+daphne==2.1.0             # via channels
 django-autoslug-iplweb==1.9.4.dev0  # via ndh
 django-bootstrap3==9.1.0  # via ndh
-django==2.0.2             # via channels, ndh
+django==2.0.3             # via channels, ndh
+h2==3.0.1                 # via twisted
 hiredis==0.2.0            # via aioredis
+hpack==3.0.0              # via h2
 html2text==2018.1.9
-hyperlink==17.3.1         # via twisted
-idna==2.6                 # via requests
+hyperframe==5.1.0         # via h2
+hyperlink==18.0.0         # via twisted
+idna==2.6                 # via cryptography, hyperlink, requests, twisted
 incremental==17.5.0       # via twisted
-msgpack==0.5.4            # via channels-redis
+msgpack==0.5.6            # via channels-redis
 ndh==2.0.0
-pillow==5.0.0
-psycopg2==2.7.4
+priority==1.3.0           # via twisted
+pyasn1-modules==0.2.1     # via service-identity
+pyasn1==0.4.2             # via pyasn1-modules, service-identity
+pyopenssl==17.5.0         # via service-identity, twisted
 pytz==2018.3              # via django
 requests-threads==0.1.1
-requests==2.18.4          # via requests-threads
-six==1.11.0               # via autobahn, automat, txaio
-twisted==17.9.0           # via daphne, requests-threads
-txaio==2.8.2              # via autobahn
+requests==2.18.4
+service-identity==17.0.0  # via twisted
+six==1.11.0               # via autobahn, automat, cryptography, pyopenssl, txaio
+twisted[http2,tls]==17.9.0
+txaio==2.9.0              # via autobahn
 urllib3==1.22             # via requests
 zope.interface==4.4.3     # via twisted
