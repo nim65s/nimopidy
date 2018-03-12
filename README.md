@@ -25,7 +25,7 @@ Uses [mopidy](https://docs.mopidy.com/en/latest/), [snapcast](https://github.com
 ```
 echo NIMOPIDY_HOST=$(hostname -f) >> .env
 echo POSTGRES_PASSWORD=$(openssl rand -base64 32) >> .env
-echo DJANGO_SECRET_KEY=$(openssl rand -base64 32) >> .env
+echo SECRET_KEY=$(openssl rand -base64 32) >> .env
 ```
 
 - `conf/mopidy_local/mopidy.conf`:
@@ -41,27 +41,27 @@ bitrate = 160
 Get a premium account and your own passwords, those ones are fake :)
 You can get `client_id` & `client_secret` on [mopidy's website](https://www.mopidy.com/authenticate/#spotify).
 
+
+### Reverse Proxy
+
+This project needs a running [traefik](https://traefik.io) instance. If you don't have one, look at those examples for
+[dev](https://github.com/nim65s/traefik-dev) and [prod](https://github.com/nim65s/traefik-prod).
+
 ### Start
 
 ```
-docker-compose build
-docker-compose up -d postgres redis icecast snapserver
 docker-compose up -d
-docker exec nimopidy_worker_1 ./manage.py migrate
-docker exec nimopidy_worker_1 ./manage.py collectstatic --no-input
-docker exec nimopidy_worker_1 ./manage.py playlists
+docker-compose exec daphne ./manage.py playlists
 ```
 
 ### Shell
 
 ```
-docker exec nimopidy_worker_1 pip install ipython
-docker exec -it nimopidy_worker_1 ./manage.py shell
+docker-compose exec daphne pip install ipython
+docker-compose exec -it daphne ./manage.py shell
 ```
 
-(The last one can be *really* long, but you can let it run in the background while it retrievs all your playlists)
-
-Go to `http://nimopidy:7000`, and/or launch `snapserver -h nimopidy` from your clients
+Go to `http://nimopidy.local` (check your DNS settings, or your /etc/hosts), and/or launch `snapserver -h nimopidy` from your clients
 
 ## TODO
 
