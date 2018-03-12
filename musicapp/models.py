@@ -137,25 +137,25 @@ async def get_or_create_from_mopidy(track_data=None, uri='', force_update=False)
     if track_data is None:
         track_data = await mopidy_api('core.library.lookup', uri=uri)[0]
 
-    async def get_or_create(model, data):
+    def get_or_create(model, data):
         keys = ['name', 'date', 'length', 'disc_no', 'track_no']
         if 'uri' not in data and data['name'] == 'YouTube':
             data['uri'] = 'youtube:dumb_album'
-        yield from database_sync_to_async(model.objects.get_or_create)(uri=data['uri'], defaults={k: data[k] for k in keys if k in data})
+        yield from model.objects.get_or_create(uri=data['uri'], defaults={k: data[k] for k in keys if k in data})
 
-    track_inst, created = await get_or_create(Track, track_data)
+    track_inst, created = get_or_create(Track, track_data)
     if force_update or created:
         if 'artists' in track_data:
             for artist_data in track_data['artists']:
-                artist_inst, _ = await get_or_create(Artist, artist_data)
+                artist_inst, _ = get_or_create(Artist, artist_data)
                 await database_sync_to_async(track_inst.artists.add)(artist_inst)
         if 'album' in track_data:
             album_data = track_data['album']
-            album_inst, created = await get_or_create(Album, album_data)
+            album_inst, created = get_or_create(Album, album_data)
             if created:
                 if 'artists' in album_data:
                     for artist_data in album_data['artists']:
-                        artist_inst, _ = await get_or_create(Artist, artist_data)
+                        artist_inst, _ = get_or_create(Artist, artist_data)
                         await database_sync_to_async(album_inst.artists.add)(artist_inst)
                     await album_inst.get_cover()
                     await database_sync_to_async(album_inst.save)()
@@ -163,7 +163,7 @@ async def get_or_create_from_mopidy(track_data=None, uri='', force_update=False)
         track_inst.length = track_data['length']
         await database_sync_to_async(track_inst.save)()
         await track_inst.get_lyrics()
-    yield from track_inst
+    yield track_inst
 
 
 async def add_random(cls):

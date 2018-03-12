@@ -21,7 +21,7 @@ ENV PYTHONUNBUFFERED=1 \
    POSTGRES_PASSWORD=placeholder \
    DJANGO_SECRET_KEY=placeholder \
    DJANGO_DEBUG=False \
-   LANGAGE_CODE=fr-FR \
+   LANGUAGE_CODE=fr-FR \
    TIME_ZONE=Europe/Paris
 
 RUN mkdir /back

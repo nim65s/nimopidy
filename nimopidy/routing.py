@@ -3,7 +3,7 @@ from django.urls import path
 from channels.auth import AuthMiddlewareStack
 from channels.http import AsgiHandler
 from channels.routing import ChannelNameRouter, ProtocolTypeRouter, URLRouter
-from music_app.consumers import MusicConsumer, SnapcastConsumer, WebhooksConsumer, WSConsumer
+from musicapp.consumers import MusicConsumer, SnapcastConsumer, WebhooksConsumer, WSConsumer
 
 application = ProtocolTypeRouter({
     'channel': ChannelNameRouter({

@@ -38,12 +38,12 @@ async def get_lyrics(artist, song):
 
 async def telnet_snapcast(method, params=None):
     # TODO with statement
-    reader, writer = yield from asyncio.open_connection(settings.SNAPSERVER_HOST, settings.SNAPSERVER_PORT)
+    reader, writer = yield asyncio.open_connection(settings.SNAPSERVER_HOST, settings.SNAPSERVER_PORT)
     data = {"id": 1, "jsonrpc": "2.0", "method": method}
     if params is not None:
         data["params"] = params
     writer.write(dumps(data).encode() + b'\r\n')
-    yield from loads(reader.readuntil(b'\r\n').decode())
+    yield loads(reader.readuntil(b'\r\n').decode())
     writer.close()
 
 
