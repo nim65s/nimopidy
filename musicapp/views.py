@@ -6,8 +6,11 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import UpdateView
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 from .models import ACTIONS, Event, Playlist, Track
-from .utils import mopidy_api, start
+from .utils import mopidy_api, start, telnet_snapcast
 
 
 @csrf_exempt
@@ -54,3 +57,18 @@ def next(request):
     Event.objects.create(user=request.user, action=ACTIONS.next, track=track)
     mopidy_api('core.playback.next')
     return JsonResponse({'result': 'ok'})
+
+
+@csrf_exempt
+def webhooks(request):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.send)('music', loads(request.body))
+    return JsonResponse({})
+
+
+@csrf_exempt
+def snapcast(request):
+    channel_layer = get_channel_layer()
+    async_to_sync(telnet_snapcast)("Client.SetVolume", loads(request.body))
+    async_to_sync(channel_layer.send)('music', {'type': 'snapcast'})
+    return JsonResponse({})

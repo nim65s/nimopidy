@@ -1,6 +1,5 @@
 from json import loads
 
-from django.http import JsonResponse
 from django.utils import timezone
 
 from channels.consumer import AsyncConsumer
@@ -12,12 +11,12 @@ from .utils import start, telnet_snapcast
 
 
 class WSConsumer(AsyncJsonWebsocketConsumer):
-    async def connect(self, event):
+    async def connect(self):
         await self.accept()
         await self.channel_layer.group_add('clients', self.channel_name)
         await self.channel_layer.group_send('music', {'type': 'snapcast'})
 
-    async def disconnect(self, event):
+    async def disconnect(self, code):
         await self.channel_layer.group_discard('clients', self.channel_name)
 
 
@@ -95,7 +94,7 @@ class MusicConsumer(AsyncConsumer):
 # TODO: remettre ça dans les vues
 class WebhookConsumer(AsyncConsumer):
     async def http_request(self, body):
-        msg = loads(body)
+        msg = loads(body['body'])
         msg['type'] = 'nimopidy'
         await self.channel_layer.send('music', msg)
 

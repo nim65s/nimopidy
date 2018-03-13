@@ -10,6 +10,8 @@ RUN touch public/index.html && npm install && npm run build
 
 FROM python:alpine3.7
 
+EXPOSE 8000
+
 ENV PYTHONUNBUFFERED=1 \
    NIMOPIDY_HOST=nimopidy \
    REDIS_HOST=redis \
@@ -54,6 +56,4 @@ RUN mkdir -p musicapp/static/css musicapp/static/js \
 CMD while ! nc -z postgres 5432; do sleep 1; done \
  && ./manage.py migrate \
  && ./manage.py collectstatic --no-input \
- && daphne \
-    -b 0.0.0.0 \
-    nimopidy.asgi:channel_layer
+ && ./manage.py runserver 0.0.0.0:8000

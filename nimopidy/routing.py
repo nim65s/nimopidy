@@ -2,17 +2,13 @@ from django.urls import path
 
 from channels.auth import AuthMiddlewareStack
 from channels.http import AsgiHandler
-from channels.routing import ChannelNameRouter, ProtocolTypeRouter, URLRouter
-from musicapp.consumers import MusicConsumer, SnapcastConsumer, WebhooksConsumer, WSConsumer
+from channels.routing import ChannelNameRouter, ProtocolTypeRouter
+from musicapp.consumers import MusicConsumer, WSConsumer
 
 application = ProtocolTypeRouter({
     'channel': ChannelNameRouter({
         'music': MusicConsumer
     }),
-    'http': AuthMiddlewareStack(URLRouter([
-        path('webhooks', WebhooksConsumer, name='webhooks'),
-        path('snapcast', SnapcastConsumer, name='snapcast'),
-        path('', AsgiHandler),
-    ])),
+    'http': AuthMiddlewareStack(AsgiHandler),
     'websocket': AuthMiddlewareStack(WSConsumer),
 })

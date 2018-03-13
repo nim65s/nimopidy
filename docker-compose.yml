@@ -24,12 +24,8 @@ services:
       context: .
       dockerfile: conf/Dockerfile.nimopidy
     restart: unless-stopped
-    expose:
-      - "8000"
-    depends_on:
-      - redis
-      - postgres
-      - memcached
+    volumes:
+      - "srv:/srv"
     env_file:
       - .env
     networks:
@@ -39,16 +35,12 @@ services:
       - "traefik.enable=true"
       - "traefik.frontend.rule=Host: nimopidy, nimopidy.${DOMAIN_NAME:-local}"
       - "traefik.docker.network=traefik"
+      - "traefik.port=8000"
   worker:
     build:
       context: .
       dockerfile: conf/Dockerfile.nimopidy
     restart: unless-stopped
-    depends_on:
-      - redis
-      - postgres
-      - snapserver
-      - memcached
     command: ./manage.py runworker mopidy snapcast
     volumes:
       - "srv:/srv"
@@ -79,11 +71,6 @@ services:
     ports:
       - "6600:6600"
       - "6680:6680"
-    depends_on:
-      - worker
-      - daphne
-      - icecast
-      - snapserver
     volumes:
       - "snap:/snap"
   snapserver:

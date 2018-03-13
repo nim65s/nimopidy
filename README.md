@@ -58,7 +58,7 @@ docker-compose exec daphne ./manage.py playlists
 
 ```
 docker-compose exec daphne pip install ipython
-docker-compose exec -it daphne ./manage.py shell
+docker-compose exec daphne ./manage.py shell
 ```
 
 Go to `http://nimopidy.local` (check your DNS settings, or your /etc/hosts), and/or launch `snapserver -h nimopidy` from your clients

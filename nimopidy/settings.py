@@ -7,6 +7,7 @@ SELF_MAIL = False
 DOMAIN_NAME = environ.get('DOMAIN_NAME', 'local')
 ALLOWED_HOSTS = [environ.get('ALLOWED_HOST', f'{PROJECT}.{DOMAIN_NAME}')]
 ALLOWED_HOSTS += [f'www.{host}' for host in ALLOWED_HOSTS]
+ALLOWED_HOSTS += ['daphne']
 
 BASE_DIR = dirname(dirname(abspath(__file__)))
 
@@ -110,22 +111,22 @@ CACHES = {
     }
 }
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'logging.NullHandler',
-        },
-    },
-    'loggers': {
-        'django.security.DisallowedHost': {
-            'handlers': ['null'],
-            'propagate': False,
-        },
-    },
-}
+# LOGGING = {
+    # 'version': 1,
+    # 'disable_existing_loggers': False,
+    # 'handlers': {
+        # 'null': {
+            # 'level': 'DEBUG',
+            # 'class': 'logging.NullHandler',
+        # },
+    # },
+    # 'loggers': {
+        # 'django.security.DisallowedHost': {
+            # 'handlers': ['null'],
+            # 'propagate': False,
+        # },
+    # },
+# }
 
 
 SITE_ID = 1
