@@ -14,9 +14,12 @@ from os import environ
 from os.path import abspath, dirname
 
 PROJECT = 'nimopidy'
+DOMAIN_NAME = environ.get('DOMAIN_NAME', 'local')
 
 BASE_DIR = dirname(dirname(abspath(__file__)))
 ALLOWED_HOSTS = [PROJECT, 'daphne', 'localhost', 'nimopidy', environ['NIMOPIDY_HOST']]
+ALLOWED_HOSTS += [environ.get('ALLOWED_HOST', f'{PROJECT}.{DOMAIN_NAME}')]
+ALLOWED_HOSTS += [f'www.{host}' for host in ALLOWED_HOSTS]
 
 SECRET_KEY = environ['DJANGO_SECRET_KEY']
 
