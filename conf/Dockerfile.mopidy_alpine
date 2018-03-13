@@ -1,0 +1,27 @@
+FROM alpine:edge
+
+ADD apk /apk
+
+RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories \
+ && apk update -q \
+ && apk add -q --allow-untrusted \
+    mopidy@testing \
+    py2-pip \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    python2-dev \
+    /apk/* \
+ && pip install --no-cache-dir \
+    Mopidy-Spotify \
+    Mopidy-Webhooks \
+    Mopidy-Youtube \
+    youtube_dl
+
+
+RUN mkdir -p /root/.config/mopidy
+
+COPY conf/mopidy_global.conf /etc/mopidy/mopidy.conf
+COPY conf/mopidy_local.conf /root/.config/mopidy/mopidy.conf
+
+ENTRYPOINT mopidy --config /etc/mopidy:/root/.config/mopidy
