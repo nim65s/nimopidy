@@ -7,6 +7,7 @@ RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER user
 
 RUN yaourt -S --noconfirm mopidy mopidy-spotify mopidy-youtube python2-pip mpc gst-plugins-bad
+RUN yaourt -S --noconfirm openbsd-netcat
 
 USER root
 RUN pip2 install Mopidy-Webhooks
@@ -15,4 +16,5 @@ RUN mkdir -p /root/.config/mopidy
 COPY conf/mopidy_global.conf /etc/mopidy/mopidy.conf
 COPY conf/mopidy_local.conf /root/.config/mopidy/mopidy.conf
 
-ENTRYPOINT /usr/bin/mopidy --config /etc/mopidy:/root/.config/mopidy
+CMD while ! nc -z daphne 8000; do sleep 1; done \
+ && mopidy --config /etc/mopidy:/root/.config/mopidy
