@@ -29,13 +29,12 @@ services:
     env_file:
       - .env
     networks:
-      - traefik
+      - proxytanet
       - default
     labels:
       - "traefik.enable=true"
       - "traefik.frontend.rule=Host: nimopidy, nimopidy.${DOMAIN_NAME:-local}"
-      - "traefik.docker.network=traefik"
-      - "traefik.port=8000"
+      - "traefik.docker.network=proxytanet"
   worker:
     build:
       context: .
@@ -52,7 +51,7 @@ services:
     volumes:
       - "srv:/srv"
     networks:
-      - traefik
+      - proxytanet
     labels:
       - "traefik.enable=true"
       - "traefik.frontend.rule=Host: nimopidy, nimopidy.${DOMAIN_NAME:-local}; PathPrefix: /static, /media"
@@ -85,5 +84,5 @@ services:
       - "snap:/snap"
 
 networks:
-  traefik:
+  proxytanet:
     external: true

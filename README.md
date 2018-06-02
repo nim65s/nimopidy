@@ -44,8 +44,7 @@ You can get `client_id` & `client_secret` on [mopidy's website](https://www.mopi
 
 ### Reverse Proxy
 
-This project needs a running [traefik](https://traefik.io) instance. If you don't have one, look at those examples for
-[dev](https://github.com/nim65s/traefik-dev) and [prod](https://github.com/nim65s/traefik-prod).
+This website needs a reverse proxy, like [proxyta.net](https://framagit.org/nim65s/proxyta.net)
 
 ### Start
 
